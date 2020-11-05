@@ -19,6 +19,10 @@ The glog package provides a fast and simple logger dedicated to TEXT/JSON output
 ```bash
 go get -u github.com/DataWorkbench/glog
 ```
+Used in go modules
+```bash
+go get -insecure github.com/DataWorkbench/glog
+```
 
 ## Quick Start
 
