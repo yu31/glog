@@ -34,7 +34,7 @@ func (e *Entry) withError(err error) {
 
 func (e *Entry) encodeHeads() {
 	e.Encoder.AddBeginMarker()
-	//e.Encoder.AddEntryTime(time.Now(), e.l.timeLayout)
+	e.Encoder.AddEntryTime(time.Now(), e.l.timeLayout)
 	e.Encoder.AddLevel(e.Level)
 }
 
