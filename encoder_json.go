@@ -72,7 +72,7 @@ func (enc *jsonEncoder) WriteIn(p []byte) error {
 }
 
 // Implements ObjectEncoder
-func (enc *jsonEncoder) AddByte(key string, v byte)       { enc.appendKey(key); enc.appendByteRaw(v) }
+func (enc *jsonEncoder) AddByte(key string, b byte)       { enc.appendKey(key); enc.appendByteInt(b) }
 func (enc *jsonEncoder) AddString(key string, s string)   { enc.appendKey(key); enc.appendString(s) }
 func (enc *jsonEncoder) AddBool(key string, v bool)       { enc.appendKey(key); enc.appendBool(v) }
 func (enc *jsonEncoder) AddInt64(key string, i int64)     { enc.appendKey(key); enc.appendInt64(i) }
@@ -104,7 +104,7 @@ func (enc *jsonEncoder) AddInterface(key string, i interface{}) error {
 }
 
 // Implements FieldEncoder
-func (enc *jsonEncoder) AppendByte(v byte)       { enc.addElementSeparator(); enc.appendByteRaw(v) }
+func (enc *jsonEncoder) AppendByte(b byte)       { enc.addElementSeparator(); enc.appendByteInt(b) }
 func (enc *jsonEncoder) AppendString(s string)   { enc.addElementSeparator(); enc.appendString(s) }
 func (enc *jsonEncoder) AppendBool(v bool)       { enc.addElementSeparator(); enc.appendBool(v) }
 func (enc *jsonEncoder) AppendInt64(i int64)     { enc.addElementSeparator(); enc.appendInt64(i) }
@@ -158,8 +158,8 @@ func (enc *jsonEncoder) appendString(s string) {
 	enc.buf.AppendByte('"')
 }
 
-func (enc *jsonEncoder) appendByteRaw(v byte) {
-	enc.buf.AppendUint(uint64(v))
+func (enc *jsonEncoder) appendByteInt(b byte) {
+	enc.buf.AppendUint(uint64(b))
 }
 
 func (enc *jsonEncoder) appendInt64(i int64) {

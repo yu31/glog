@@ -77,7 +77,7 @@ func (enc *textEncoder) WriteIn(p []byte) error {
 }
 
 // Implements ObjectEncoder
-func (enc *textEncoder) AddByte(key string, v byte)       { enc.appendKey(key); enc.appendByteRaw(v) }
+func (enc *textEncoder) AddByte(key string, b byte)       { enc.appendKey(key); enc.appendByteInt(b) }
 func (enc *textEncoder) AddString(key string, s string)   { enc.appendKey(key); enc.appendString(s) }
 func (enc *textEncoder) AddBool(key string, v bool)       { enc.appendKey(key); enc.appendBool(v) }
 func (enc *textEncoder) AddInt64(key string, i int64)     { enc.appendKey(key); enc.appendInt64(i) }
@@ -109,7 +109,7 @@ func (enc *textEncoder) AddInterface(key string, i interface{}) error {
 }
 
 // Implements FieldEncoder
-func (enc *textEncoder) AppendByte(v byte)       { enc.addElementSeparator(); enc.appendByteRaw(v) }
+func (enc *textEncoder) AppendByte(v byte)       { enc.addElementSeparator(); enc.appendByteInt(v) }
 func (enc *textEncoder) AppendString(s string)   { enc.addElementSeparator(); enc.appendString(s) }
 func (enc *textEncoder) AppendBool(v bool)       { enc.addElementSeparator(); enc.appendBool(v) }
 func (enc *textEncoder) AppendInt64(i int64)     { enc.addElementSeparator(); enc.appendInt64(i) }
@@ -161,8 +161,8 @@ func (enc *textEncoder) appendString(s string) {
 	AppendStringEscape(enc.buf, s)
 }
 
-func (enc *textEncoder) appendByteRaw(v byte) {
-	enc.buf.AppendUint(uint64(v))
+func (enc *textEncoder) appendByteInt(b byte) {
+	enc.buf.AppendUint(uint64(b))
 }
 
 func (enc *textEncoder) appendInt64(i int64) {

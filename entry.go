@@ -65,9 +65,11 @@ func (e *Entry) Fire() {
 		return
 	}
 	e.encodeEnds()
+
 	// NOTICE: once the `Execute` returns, the *Entry should be disposed,
 	// if not can have unexpected result.
 	e.withError(e.l.executor.Execute(e))
+
 	// Release resources
 	e.free()
 }
@@ -140,309 +142,309 @@ func (e *Entry) Hour(key string, d time.Duration) *Entry {
 	return e
 }
 
-func (e *Entry) Array(key string, arr ArrayMarshaler) *Entry {
+func (e *Entry) Array(key string, am ArrayMarshaler) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, arr))
+	e.withError(e.Encoder.AddArray(key, am))
 	return e
 }
 
-func (e *Entry) Object(key string, obj ObjectMarshaler) *Entry {
+func (e *Entry) Object(key string, om ObjectMarshaler) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddObject(key, obj))
+	e.withError(e.Encoder.AddObject(key, om))
 	return e
 }
 
-// Byte encode the value to an integer formats;
-func (e *Entry) Byte(key string, val byte) *Entry {
+// Byte encode the value to an integer number.
+func (e *Entry) Byte(key string, b byte) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddByte(key, val)
+	e.Encoder.AddByte(key, b)
 	return e
 }
 
-// Bytes encode the value to integer array formats
-func (e *Entry) Bytes(key string, val []byte) *Entry {
+// Bytes encode the value to an integer array.
+func (e *Entry) Bytes(key string, bb []byte) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, byteArray(val)))
+	e.withError(e.Encoder.AddArray(key, byteArray(bb)))
 	return e
 }
 
-func (e *Entry) String(key string, val string) *Entry {
+func (e *Entry) String(key string, s string) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddString(key, val)
+	e.Encoder.AddString(key, s)
 	return e
 }
 
-func (e *Entry) Strings(key string, val []string) *Entry {
+func (e *Entry) Strings(key string, ss []string) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, stringArray(val)))
+	e.withError(e.Encoder.AddArray(key, stringArray(ss)))
 	return e
 }
 
-func (e *Entry) Bool(key string, val bool) *Entry {
+func (e *Entry) Bool(key string, v bool) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddBool(key, val)
+	e.Encoder.AddBool(key, v)
 	return e
 }
 
-func (e *Entry) Bools(key string, val []bool) *Entry {
+func (e *Entry) Bools(key string, vv []bool) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, bools(val)))
+	e.withError(e.Encoder.AddArray(key, bools(vv)))
 	return e
 }
 
-func (e *Entry) Rune(key string, val rune) *Entry {
+func (e *Entry) Rune(key string, v rune) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddInt64(key, int64(v))
 	return e
 }
 
-func (e *Entry) Runes(key string, val []rune) *Entry {
+func (e *Entry) Runes(key string, vv []rune) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, runes(val)))
+	e.withError(e.Encoder.AddArray(key, runes(vv)))
 	return e
 }
 
-func (e *Entry) Int(key string, val int) *Entry {
+func (e *Entry) Int(key string, i int) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddInt64(key, int64(i))
 	return e
 }
 
-func (e *Entry) Ints(key string, val []int) *Entry {
+func (e *Entry) Ints(key string, ii []int) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, ints(val)))
+	e.withError(e.Encoder.AddArray(key, ints(ii)))
 	return e
 }
 
-func (e *Entry) Int8(key string, val int8) *Entry {
+func (e *Entry) Int8(key string, i int8) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddInt64(key, int64(i))
 	return e
 }
 
-func (e *Entry) Int8s(key string, val []int8) *Entry {
+func (e *Entry) Int8s(key string, ii []int8) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, int8s(val)))
+	e.withError(e.Encoder.AddArray(key, int8s(ii)))
 	return e
 }
 
-func (e *Entry) Int16(key string, val int16) *Entry {
+func (e *Entry) Int16(key string, i int16) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddInt64(key, int64(i))
 	return e
 }
 
-func (e *Entry) Int16s(key string, val []int16) *Entry {
+func (e *Entry) Int16s(key string, ii []int16) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, int16s(val)))
+	e.withError(e.Encoder.AddArray(key, int16s(ii)))
 	return e
 }
 
-func (e *Entry) Int32(key string, val int32) *Entry {
+func (e *Entry) Int32(key string, i int32) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddInt64(key, int64(i))
 	return e
 }
 
-func (e *Entry) Int32s(key string, val []int32) *Entry {
+func (e *Entry) Int32s(key string, ii []int32) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, int32s(val)))
+	e.withError(e.Encoder.AddArray(key, int32s(ii)))
 	return e
 }
 
-func (e *Entry) Int64(key string, val int64) *Entry {
+func (e *Entry) Int64(key string, i int64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddInt64(key, int64(i))
 	return e
 }
 
-func (e *Entry) Int64s(key string, val []int64) *Entry {
+func (e *Entry) Int64s(key string, ii []int64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, int64s(val)))
+	e.withError(e.Encoder.AddArray(key, int64s(ii)))
 	return e
 }
 
-func (e *Entry) Uint(key string, val uint) *Entry {
+func (e *Entry) Uint(key string, i uint) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddUnt64(key, uint64(val))
+	e.Encoder.AddUnt64(key, uint64(i))
 	return e
 }
 
-func (e *Entry) Uints(key string, val []uint) *Entry {
+func (e *Entry) Uints(key string, ii []uint) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, uints(val)))
+	e.withError(e.Encoder.AddArray(key, uints(ii)))
 	return e
 }
 
-func (e *Entry) Uint8(key string, val uint8) *Entry {
+func (e *Entry) Uint8(key string, i uint8) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddUnt64(key, uint64(val))
+	e.Encoder.AddUnt64(key, uint64(i))
 	return e
 }
 
-func (e *Entry) Uint8s(key string, val []uint8) *Entry {
+func (e *Entry) Uint8s(key string, ii []uint8) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, uint8s(val)))
+	e.withError(e.Encoder.AddArray(key, uint8s(ii)))
 	return e
 }
 
-func (e *Entry) Uint16(key string, val uint16) *Entry {
+func (e *Entry) Uint16(key string, i uint16) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddUnt64(key, uint64(val))
+	e.Encoder.AddUnt64(key, uint64(i))
 	return e
 }
 
-func (e *Entry) Uint16s(key string, val []uint16) *Entry {
+func (e *Entry) Uint16s(key string, ii []uint16) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, uint16s(val)))
+	e.withError(e.Encoder.AddArray(key, uint16s(ii)))
 	return e
 }
 
-func (e *Entry) Uint32(key string, val uint32) *Entry {
+func (e *Entry) Uint32(key string, i uint32) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddUnt64(key, uint64(val))
+	e.Encoder.AddUnt64(key, uint64(i))
 	return e
 }
 
-func (e *Entry) Uint32s(key string, val []uint32) *Entry {
+func (e *Entry) Uint32s(key string, ii []uint32) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, uint32s(val)))
+	e.withError(e.Encoder.AddArray(key, uint32s(ii)))
 	return e
 }
 
-func (e *Entry) Uint64(key string, val uint64) *Entry {
+func (e *Entry) Uint64(key string, i uint64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddUnt64(key, uint64(val))
+	e.Encoder.AddUnt64(key, uint64(i))
 	return e
 }
 
-func (e *Entry) Uint64s(key string, val []uint64) *Entry {
+func (e *Entry) Uint64s(key string, ii []uint64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, uint64s(val)))
+	e.withError(e.Encoder.AddArray(key, uint64s(ii)))
 	return e
 }
 
-func (e *Entry) Float32(key string, val float32) *Entry {
+func (e *Entry) Float32(key string, f float32) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddFloat64(key, float64(val))
+	e.Encoder.AddFloat64(key, float64(f))
 	return e
 }
 
-func (e *Entry) Float32s(key string, val []float32) *Entry {
+func (e *Entry) Float32s(key string, ff []float32) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, float32s(val)))
+	e.withError(e.Encoder.AddArray(key, float32s(ff)))
 	return e
 }
 
-func (e *Entry) Float64(key string, val float64) *Entry {
+func (e *Entry) Float64(key string, f float64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddFloat64(key, val)
+	e.Encoder.AddFloat64(key, f)
 	return e
 }
 
-func (e *Entry) Float64s(key string, val []float64) *Entry {
+func (e *Entry) Float64s(key string, ff []float64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, float64s(val)))
+	e.withError(e.Encoder.AddArray(key, float64s(ff)))
 	return e
 }
 
-func (e *Entry) Complex64(key string, val complex64) *Entry {
+func (e *Entry) Complex64(key string, c complex64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddComplex128(key, complex128(val))
+	e.Encoder.AddComplex128(key, complex128(c))
 	return e
 }
 
-func (e *Entry) Complex64s(key string, val []complex64) *Entry {
+func (e *Entry) Complex64s(key string, cc []complex64) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, complex64s(val)))
+	e.withError(e.Encoder.AddArray(key, complex64s(cc)))
 	return e
 }
 
-func (e *Entry) Complex128(key string, val complex128) *Entry {
+func (e *Entry) Complex128(key string, c complex128) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddComplex128(key, val)
+	e.Encoder.AddComplex128(key, c)
 	return e
 }
 
-func (e *Entry) Complex128s(key string, val []complex128) *Entry {
+func (e *Entry) Complex128s(key string, cc []complex128) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddArray(key, complex128s(val)))
+	e.withError(e.Encoder.AddArray(key, complex128s(cc)))
 	return e
 }
 
@@ -462,20 +464,20 @@ func (e *Entry) Errors(key string, errs []error) *Entry {
 	return e
 }
 
-func (e *Entry) Time(key string, val time.Time, layout string) *Entry {
+func (e *Entry) Time(key string, t time.Time, layout string) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddTime(key, val, layout)
+	e.Encoder.AddTime(key, t, layout)
 	return e
 }
 
 // Any uses reflection to serialize arbitrary objects, so it can be
 // slow and allocation-heavy.
-func (e *Entry) Any(key string, val interface{}) *Entry {
+func (e *Entry) Any(key string, i interface{}) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddInterface(key, val))
+	e.withError(e.Encoder.AddInterface(key, i))
 	return e
 }

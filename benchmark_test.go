@@ -19,6 +19,16 @@ func BenchmarkNewDefault(b *testing.B) {
 	})
 }
 
+func BenchmarkLogger_Clone(b *testing.B) {
+	l := NewDefault()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_ = l.Clone()
+		}
+	})
+}
+
 func BenchmarkLogEmpty(b *testing.B) {
 	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
 	b.ResetTimer()
@@ -29,7 +39,7 @@ func BenchmarkLogEmpty(b *testing.B) {
 	})
 }
 
-func BenchmarkDisabled(b *testing.B) {
+func BenchmarkLogDisabled(b *testing.B) {
 	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil)).WithLevel(InfoLevel)
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -39,23 +49,8 @@ func BenchmarkDisabled(b *testing.B) {
 	})
 }
 
-func BenchmarkInfo(b *testing.B) {
+func BenchmarkLogMsg(b *testing.B) {
 	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
-	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			l.Debug().Msg(fakeMessage).Fire()
-		}
-	})
-}
-
-func BenchmarkWithFields(b *testing.B) {
-	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
-	l.WithFields().AddString("string", "four")
-	l.WithFields().AddTime("time", time.Time{}, "")
-	l.WithFields().AddInt64("int", 123)
-	l.WithFields().AddFloat64("float", -2.203230293249593)
-
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -76,6 +71,21 @@ func BenchmarkLogFields(b *testing.B) {
 				Float32("float", -2.203230293249593).
 				Msg(fakeMessage).
 				Fire()
+		}
+	})
+}
+
+func BenchmarkLogWithFields(b *testing.B) {
+	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
+	l.WithFields().AddString("string", "four")
+	l.WithFields().AddTime("time", time.Time{}, "")
+	l.WithFields().AddInt64("int", 123)
+	l.WithFields().AddFloat64("float", -2.203230293249593)
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			l.Debug().Msg(fakeMessage).Fire()
 		}
 	})
 }

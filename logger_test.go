@@ -40,7 +40,7 @@ func TestLoggerOutput(t *testing.T) {
 		Byte("Byte", 'a').
 		Bytes("Bytes", []byte("abc")).
 		Int64("Int64", 64).
-		Int64s("Int64s", []int64{641, 642, 643}).
+		Int64s("Int64s", []int64{123, 456, 789}).
 		Complex128("Complex128", complex(1, 2)).
 		Float64("Float64", 99.99).
 		Strings("Strings", []string{"a", "b", "c"}).

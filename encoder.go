@@ -2,12 +2,12 @@ package glog
 
 import "time"
 
-// EncoderFunc used to get a new Encoder instances
+// EncoderFunc used to return a new Encoder instances
 type EncoderFunc func() Encoder
 
-// FieldEncoder used to add single field
+// FieldEncoder used to add single elements
 type FieldEncoder interface {
-	AppendByte(v byte) // AppendByte encode val to the form of binary
+	AppendByte(b byte) // AppendByte encode b to the form of binary
 	AppendString(s string)
 	AppendBool(v bool)
 	AppendInt64(i int64)
@@ -31,9 +31,9 @@ type ArrayEncoder interface {
 	FieldEncoder
 }
 
-// ObjectEncoder used to add a complete k/v field
+// ObjectEncoder used to add an k/v field
 type ObjectEncoder interface {
-	AddByte(key string, v byte) // AddByte encode val to the form of binary
+	AddByte(key string, b byte) // AddByte encode b to the form of binary
 	AddString(key string, s string)
 	AddBool(key string, v bool)
 	AddInt64(key string, i int64)
