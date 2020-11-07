@@ -14,8 +14,9 @@ import (
 )
 
 func TestEntry_Byte_WithText(t *testing.T) {
+	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithErrorOutput(&eb)
 
 	l.Info().Byte("key", '=').Fire()
 
@@ -38,11 +39,14 @@ func TestEntry_Byte_WithText(t *testing.T) {
 	i, err := strconv.ParseInt(info, 10, 64)
 	require.Nil(t, err, "%q", info)
 	require.Equal(t, byte(i), byte('='))
+
+	require.Equal(t, eb.Len(), 0)
 }
 
 func TestEntry_Byte_WithJSON(t *testing.T) {
+	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder)
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder).WithErrorOutput(&eb)
 
 	l.Info().Byte("key", '=').Fire()
 
@@ -56,11 +60,14 @@ func TestEntry_Byte_WithJSON(t *testing.T) {
 	n, ok := m["key"].(float64)
 	require.True(t, ok, "%+q", m["key"])
 	require.Equal(t, byte(n), byte('='), "%q", m["key"])
+
+	require.Equal(t, eb.Len(), 0)
 }
 
 func TestEntry_Duration_WithText(t *testing.T) {
+	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithErrorOutput(&eb)
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	d := time.Second + time.Duration(r.Int63n(int64(time.Second)))
@@ -113,11 +120,14 @@ func TestEntry_Duration_WithText(t *testing.T) {
 	require.True(t, strings.HasPrefix(fields[5], "Hour="), "%q", fields[5])
 	require.True(t, strings.HasSuffix(fields[5], hourSuffix), "%q", fields[5])
 	require.False(t, strings.Contains(fields[5], " "), "%q", fields[5])
+
+	require.Equal(t, eb.Len(), 0)
 }
 
 func TestEntry_Duration_WithJSON(t *testing.T) {
+	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder)
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder).WithErrorOutput(&eb)
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	d := time.Second + time.Duration(r.Int63n(int64(time.Second)))
@@ -163,4 +173,6 @@ func TestEntry_Duration_WithJSON(t *testing.T) {
 	// Hour
 	require.NotEqual(t, len(m["Hour"]), 0, "%q", m)
 	require.True(t, strings.HasSuffix(m["Hour"], hourSuffix), "%q", m["Hour"])
+
+	require.Equal(t, eb.Len(), 0)
 }

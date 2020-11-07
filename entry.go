@@ -462,6 +462,13 @@ func (e *Entry) Any(key string, i interface{}) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.withError(e.Encoder.AddInterface(key, i))
+	switch m := i.(type) {
+	case ArrayMarshaler:
+		e.withError(e.Encoder.AddArray(key, m))
+	case ObjectMarshaler:
+		e.withError(e.Encoder.AddObject(key, m))
+	default:
+		e.withError(e.Encoder.AddInterface(key, i))
+	}
 	return e
 }

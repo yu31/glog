@@ -128,9 +128,18 @@ func (enc *jsonEncoder) AppendTime(t time.Time, layout string) {
 	enc.addElementSeparator()
 	enc.appendTime(t, layout)
 }
-func (enc *jsonEncoder) AppendArray(am ArrayMarshaler) error   { return enc.appendArray(am) }
-func (enc *jsonEncoder) AppendObject(om ObjectMarshaler) error { return enc.appendObject(om) }
-func (enc *jsonEncoder) AppendInterface(i interface{}) error   { return enc.appendInterface(i) }
+func (enc *jsonEncoder) AppendArray(am ArrayMarshaler) error {
+	enc.addElementSeparator()
+	return enc.appendArray(am)
+}
+func (enc *jsonEncoder) AppendObject(om ObjectMarshaler) error {
+	enc.addElementSeparator()
+	return enc.appendObject(om)
+}
+func (enc *jsonEncoder) AppendInterface(i interface{}) error {
+	enc.addElementSeparator()
+	return enc.appendInterface(i)
+}
 
 // build buffer
 func (enc *jsonEncoder) appendKey(key string) {
@@ -248,12 +257,11 @@ func (enc *jsonEncoder) appendInterface(i interface{}) error {
 	var b []byte
 
 	switch m := i.(type) {
-	case ArrayMarshaler:
-		return enc.appendArray(m)
-	case ObjectMarshaler:
-		return enc.appendObject(m)
 	case json.Marshaler:
 		b, err = m.MarshalJSON()
+	case nil:
+		enc.buf.AppendString("null")
+		return nil
 	default:
 		b, err = json.Marshal(i)
 	}

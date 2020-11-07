@@ -25,39 +25,6 @@ func TestLoggerNewDefault(t *testing.T) {
 	require.True(t, reflect.DeepEqual(l.errorOutput, os.Stderr))
 }
 
-func TestLoggerOutput(t *testing.T) {
-	l := NewDefault().WithCaller(true)
-
-	l.Info().Msg("HelloWorld").Fire()
-
-	l.WithFields().AddString("extra-k1", "extra-v1")
-	l.WithFields().AddString("extra_k2", "extra-v2")
-
-	l.Info().
-		Msg("Test logger out").
-		String("String", "Value").
-		Strings("Strings", []string{"a", "b", "c"}).
-		Byte("Byte", 'a').
-		Bytes("Bytes", []byte("abc")).
-		Int64("Int64", 64).
-		Int64s("Int64s", []int64{123, 456, 789}).
-		Complex128("Complex128", complex(1, 2)).
-		Float64("Float64", 99.99).
-		Strings("Strings", []string{"a", "b", "c"}).
-		Bytes("Bytes", []byte("HEllO")).
-		Bool("Bool", true).
-		Time("Time", time.Now(), defaultTimeLayout).
-		Any("Interface", []string{"i1", "i2", "i3"}).
-		Fire()
-
-	// all level
-	l.Debug().Msg("the debug log message").Fire()
-	l.Info().Msg("the info log message").Fire()
-	l.Warn().Msg("the warn log message").Fire()
-	l.Error().Msg("the error log message").Fire()
-	l.Fatal().Msg("the fatal log message").Fire()
-}
-
 func TestLogger_WithLevel(t *testing.T) {
 	var b bytes.Buffer
 	l := NewDefault()
@@ -71,7 +38,6 @@ func TestLogger_WithLevel(t *testing.T) {
 
 func TestLogger_WithCaller(t *testing.T) {
 	var b bytes.Buffer
-
 	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithCaller(true)
 	l.WithFields().AddString("k1", "v1")
 	l.WithFields().AddString("k2", "v2")
@@ -87,7 +53,6 @@ func TestLogger_WithCaller(t *testing.T) {
 
 func TestLogger_WithFields(t *testing.T) {
 	var b bytes.Buffer
-
 	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
 
 	l.WithFields().AddString("req-k1", "req-v1")
@@ -107,9 +72,9 @@ func TestLogger_WithFields(t *testing.T) {
 }
 
 func TestLogger_Clone(t *testing.T) {
+	var eb bytes.Buffer
 	var b bytes.Buffer
-
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithErrorOutput(&eb)
 	l.WithFields().AddString("filed-k1", "filed-v1")
 
 	nl := l.Clone()
@@ -154,11 +119,52 @@ func TestLogger_Clone(t *testing.T) {
 	require.Contains(t, s, "filed-v1")
 	require.Contains(t, s, "filed-k2")
 	require.Contains(t, s, "filed-v2")
+
+	require.Equal(t, eb.Len(), 0)
+}
+
+func TestLoggerWithTextEncoder(t *testing.T) {
+	var eb bytes.Buffer
+	l := NewDefault().WithCaller(true).WithErrorOutput(&eb)
+
+	l.Info().Msg("HelloWorld").Fire()
+
+	l.WithFields().AddString("extra-k1", "extra-v1")
+	l.WithFields().AddString("extra_k2", "extra-v2")
+
+	l.Info().
+		Msg("Test logger out").
+		String("String", "Value").
+		Strings("Strings", []string{"a", "b", "c"}).
+		Byte("Byte", 'a').
+		Bytes("Bytes", []byte("abc")).
+		Int64("Int64", 64).
+		Int64s("Int64s", []int64{123, 456, 789}).
+		Complex128("Complex128", complex(1, 2)).
+		Float64("Float64", 99.99).
+		Strings("Strings", []string{"a", "b", "c"}).
+		Bytes("Bytes", []byte("HEllO")).
+		Bool("Bool", true).
+		Time("Time", time.Now(), defaultTimeLayout).
+		Any("Interface1", []string{"i1", "i2", "i3"}).
+		Any("Interface2", nil).
+		Fire()
+
+	// all level
+	l.Debug().Msg("the debug log message").Fire()
+	l.Info().Msg("the info log message").Fire()
+	l.Warn().Msg("the warn log message").Fire()
+	l.Error().Msg("the error log message").Fire()
+	l.Fatal().Msg("the fatal log message").Fire()
+
+	require.Equal(t, eb.Len(), 0)
 }
 
 func TestLoggerWithJSONEncoder(t *testing.T) {
+	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExecutor(MatchExecutor(&b, nil)).WithCaller(true)
+	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExecutor(MatchExecutor(&b, nil)).
+		WithCaller(true).WithErrorOutput(&eb)
 
 	l.Info().
 		Msg("test logger out").
@@ -186,4 +192,6 @@ func TestLoggerWithJSONEncoder(t *testing.T) {
 	m := make(map[string]interface{})
 	err := json.Unmarshal(c, &m)
 	require.Nil(t, err, "%q", string(c))
+
+	require.Equal(t, eb.Len(), 0)
 }

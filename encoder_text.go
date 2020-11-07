@@ -128,9 +128,18 @@ func (enc *textEncoder) AppendTime(t time.Time, layout string) {
 	enc.addElementSeparator()
 	enc.appendTime(t, layout)
 }
-func (enc *textEncoder) AppendArray(am ArrayMarshaler) error   { return enc.appendArray(am) }
-func (enc *textEncoder) AppendObject(om ObjectMarshaler) error { return enc.appendObject(om) }
-func (enc *textEncoder) AppendInterface(i interface{}) error   { return enc.appendInterface(i) }
+func (enc *textEncoder) AppendArray(am ArrayMarshaler) error {
+	enc.addElementSeparator()
+	return enc.appendArray(am)
+}
+func (enc *textEncoder) AppendObject(om ObjectMarshaler) error {
+	enc.addElementSeparator()
+	return enc.appendObject(om)
+}
+func (enc *textEncoder) AppendInterface(i interface{}) error {
+	enc.addElementSeparator()
+	return enc.appendInterface(i)
+}
 
 // build buffer
 func (enc *textEncoder) appendKey(key string) {
@@ -238,11 +247,10 @@ func (enc *textEncoder) appendObject(om ObjectMarshaler) error {
 }
 
 func (enc *textEncoder) appendInterface(i interface{}) error {
-	switch m := i.(type) {
-	case ArrayMarshaler:
-		return enc.appendArray(m)
-	case ObjectMarshaler:
-		return enc.appendObject(m)
+	switch i.(type) {
+	case nil:
+		enc.buf.AppendString("<nil>")
+		return nil
 	default:
 		enc.appendString(fmt.Sprintf("%+v", i))
 	}
