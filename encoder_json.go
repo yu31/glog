@@ -72,51 +72,59 @@ func (enc *jsonEncoder) WriteIn(p []byte) error {
 }
 
 // Implements ObjectEncoder
-func (enc *jsonEncoder) AddByte(key string, val byte)       { enc.appendKey(key); enc.appendByteRaw(val) }
-func (enc *jsonEncoder) AddString(key string, val string)   { enc.appendKey(key); enc.appendString(val) }
-func (enc *jsonEncoder) AddBool(key string, val bool)       { enc.appendKey(key); enc.appendBool(val) }
-func (enc *jsonEncoder) AddInt64(key string, val int64)     { enc.appendKey(key); enc.appendInt64(val) }
-func (enc *jsonEncoder) AddUnt64(key string, val uint64)    { enc.appendKey(key); enc.appendUint64(val) }
-func (enc *jsonEncoder) AddFloat64(key string, val float64) { enc.appendKey(key); enc.appendFloat(val) }
-func (enc *jsonEncoder) AddTime(key string, val time.Time, layout string) {
+func (enc *jsonEncoder) AddByte(key string, v byte)       { enc.appendKey(key); enc.appendByteRaw(v) }
+func (enc *jsonEncoder) AddString(key string, s string)   { enc.appendKey(key); enc.appendString(s) }
+func (enc *jsonEncoder) AddBool(key string, v bool)       { enc.appendKey(key); enc.appendBool(v) }
+func (enc *jsonEncoder) AddInt64(key string, i int64)     { enc.appendKey(key); enc.appendInt64(i) }
+func (enc *jsonEncoder) AddUnt64(key string, i uint64)    { enc.appendKey(key); enc.appendUint64(i) }
+func (enc *jsonEncoder) AddFloat64(key string, f float64) { enc.appendKey(key); enc.appendFloat(f) }
+func (enc *jsonEncoder) AddComplex128(key string, c complex128) {
 	enc.appendKey(key)
-	enc.appendTime(val, layout)
+	enc.appendComplex128(c)
 }
-func (enc *jsonEncoder) AddComplex128(key string, val complex128) {
+func (enc *jsonEncoder) AddTime(key string, t time.Time, layout string) {
 	enc.appendKey(key)
-	enc.appendComplex128(val)
+	enc.appendTime(t, layout)
 }
-func (enc *jsonEncoder) AddArray(key string, arr ArrayMarshaler) error {
+func (enc *jsonEncoder) AddDuration(key string, d time.Duration, layout int8) {
 	enc.appendKey(key)
-	return enc.appendArray(arr)
+	enc.appendDuration(d, layout)
 }
-func (enc *jsonEncoder) AddObject(key string, obj ObjectMarshaler) error {
+func (enc *jsonEncoder) AddArray(key string, am ArrayMarshaler) error {
 	enc.appendKey(key)
-	return enc.appendObject(obj)
+	return enc.appendArray(am)
 }
-func (enc *jsonEncoder) AddInterface(key string, val interface{}) error {
+func (enc *jsonEncoder) AddObject(key string, om ObjectMarshaler) error {
 	enc.appendKey(key)
-	return enc.appendInterface(val)
+	return enc.appendObject(om)
+}
+func (enc *jsonEncoder) AddInterface(key string, i interface{}) error {
+	enc.appendKey(key)
+	return enc.appendInterface(i)
 }
 
 // Implements FieldEncoder
-func (enc *jsonEncoder) AppendByte(val byte)       { enc.addElementSeparator(); enc.appendByteRaw(val) }
-func (enc *jsonEncoder) AppendString(val string)   { enc.addElementSeparator(); enc.appendString(val) }
-func (enc *jsonEncoder) AppendBool(val bool)       { enc.addElementSeparator(); enc.appendBool(val) }
-func (enc *jsonEncoder) AppendInt64(val int64)     { enc.addElementSeparator(); enc.appendInt64(val) }
-func (enc *jsonEncoder) AppendUnt64(val uint64)    { enc.addElementSeparator(); enc.appendUint64(val) }
-func (enc *jsonEncoder) AppendFloat64(val float64) { enc.addElementSeparator(); enc.appendFloat(val) }
-func (enc *jsonEncoder) AppendTime(val time.Time, layout string) {
+func (enc *jsonEncoder) AppendByte(v byte)       { enc.addElementSeparator(); enc.appendByteRaw(v) }
+func (enc *jsonEncoder) AppendString(s string)   { enc.addElementSeparator(); enc.appendString(s) }
+func (enc *jsonEncoder) AppendBool(v bool)       { enc.addElementSeparator(); enc.appendBool(v) }
+func (enc *jsonEncoder) AppendInt64(i int64)     { enc.addElementSeparator(); enc.appendInt64(i) }
+func (enc *jsonEncoder) AppendUnt64(i uint64)    { enc.addElementSeparator(); enc.appendUint64(i) }
+func (enc *jsonEncoder) AppendFloat64(f float64) { enc.addElementSeparator(); enc.appendFloat(f) }
+func (enc *jsonEncoder) AppendComplex128(c complex128) {
 	enc.addElementSeparator()
-	enc.appendTime(val, layout)
+	enc.appendComplex128(c)
 }
-func (enc *jsonEncoder) AppendComplex128(val complex128) {
+func (enc *jsonEncoder) AppendDuration(d time.Duration, layout int8) {
 	enc.addElementSeparator()
-	enc.appendComplex128(val)
+	enc.appendDuration(d, layout)
 }
-func (enc *jsonEncoder) AppendArray(arr ArrayMarshaler) error   { return enc.appendArray(arr) }
-func (enc *jsonEncoder) AppendObject(obj ObjectMarshaler) error { return enc.appendObject(obj) }
-func (enc *jsonEncoder) AppendInterface(val interface{}) error  { return enc.appendInterface(val) }
+func (enc *jsonEncoder) AppendTime(t time.Time, layout string) {
+	enc.addElementSeparator()
+	enc.appendTime(t, layout)
+}
+func (enc *jsonEncoder) AppendArray(am ArrayMarshaler) error   { return enc.appendArray(am) }
+func (enc *jsonEncoder) AppendObject(om ObjectMarshaler) error { return enc.appendObject(om) }
+func (enc *jsonEncoder) AppendInterface(i interface{}) error   { return enc.appendInterface(i) }
 
 // build buffer
 func (enc *jsonEncoder) appendKey(key string) {
@@ -144,27 +152,27 @@ func (enc *jsonEncoder) addElementSeparator() {
 	}
 }
 
-func (enc *jsonEncoder) appendString(val string) {
+func (enc *jsonEncoder) appendString(s string) {
 	enc.buf.AppendByte('"')
-	AppendStringEscape(enc.buf, val)
+	AppendStringEscape(enc.buf, s)
 	enc.buf.AppendByte('"')
 }
 
-func (enc *jsonEncoder) appendByteRaw(val byte) {
-	enc.buf.AppendUint(uint64(val))
+func (enc *jsonEncoder) appendByteRaw(v byte) {
+	enc.buf.AppendUint(uint64(v))
 }
 
-func (enc *jsonEncoder) appendInt64(val int64) {
-	enc.buf.AppendInt(val)
+func (enc *jsonEncoder) appendInt64(i int64) {
+	enc.buf.AppendInt(i)
 }
 
-func (enc *jsonEncoder) appendUint64(val uint64) {
-	enc.buf.AppendUint(val)
+func (enc *jsonEncoder) appendUint64(i uint64) {
+	enc.buf.AppendUint(i)
 }
 
 func (enc *jsonEncoder) appendTime(t time.Time, layout string) {
 	switch layout {
-	case TimeFormatUnix:
+	case TimeFormatUnixSecond:
 		enc.buf.AppendInt(t.Unix())
 	case TimeFormatUnixMilli:
 		enc.buf.AppendInt(t.UnixNano() / 1e6)
@@ -179,16 +187,22 @@ func (enc *jsonEncoder) appendTime(t time.Time, layout string) {
 	}
 }
 
-func (enc *jsonEncoder) appendFloat(val float64) {
+func (enc *jsonEncoder) appendDuration(d time.Duration, layout int8) {
+	enc.buf.AppendByte('"')
+	AppendDuration(enc.buf, d, layout)
+	enc.buf.AppendByte('"')
+}
+
+func (enc *jsonEncoder) appendFloat(f float64) {
 	switch {
-	case math.IsNaN(val):
+	case math.IsNaN(f):
 		enc.buf.AppendString(`"NaN"`)
-	case math.IsInf(val, 1):
+	case math.IsInf(f, 1):
 		enc.buf.AppendString(`"+Inf"`)
-	case math.IsInf(val, -1):
+	case math.IsInf(f, -1):
 		enc.buf.AppendString(`"-Inf"`)
 	default:
-		enc.buf.AppendFloat(val, 64)
+		enc.buf.AppendFloat(f, 64)
 	}
 }
 
@@ -196,9 +210,9 @@ func (enc *jsonEncoder) appendBool(val bool) {
 	enc.buf.AppendBool(val)
 }
 
-func (enc *jsonEncoder) appendComplex128(val complex128) {
+func (enc *jsonEncoder) appendComplex128(c complex128) {
 	// Cast to a platform-independent, fixed-size type.
-	r, i := float64(real(val)), float64(imag(val))
+	r, i := float64(real(c)), float64(imag(c))
 	enc.buf.AppendByte('"')
 	// Because we're always in a quoted string, we can use strconv without
 	// special-casing NaN and +/-Inf.
@@ -209,24 +223,24 @@ func (enc *jsonEncoder) appendComplex128(val complex128) {
 	enc.buf.AppendByte('"')
 }
 
-func (enc *jsonEncoder) appendArray(arr ArrayMarshaler) error {
+func (enc *jsonEncoder) appendArray(am ArrayMarshaler) error {
 	enc.buf.AppendByte('[')
-	err := arr.MarshalLogArray(enc)
+	err := am.MarshalArray(enc)
 	enc.buf.AppendByte(']')
 	return err
 }
 
-func (enc *jsonEncoder) appendObject(obj ObjectMarshaler) error {
+func (enc *jsonEncoder) appendObject(om ObjectMarshaler) error {
 	enc.buf.AppendByte('{')
-	err := obj.MarshalLogObject(enc)
+	err := om.MarshalObject(enc)
 	enc.buf.AppendByte('}')
 	return err
 }
 
-func (enc *jsonEncoder) appendInterface(val interface{}) error {
-	b, err := json.Marshal(val)
+func (enc *jsonEncoder) appendInterface(i interface{}) error {
+	b, err := json.Marshal(i)
 	if err != nil {
-		enc.appendString(fmt.Sprintf("%v", val))
+		enc.appendString(fmt.Sprintf("%v", i))
 		return err
 	}
 	_, _ = enc.buf.Write(b)

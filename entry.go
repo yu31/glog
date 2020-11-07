@@ -80,11 +80,63 @@ func (e *Entry) Msg(msg string) *Entry {
 	return e
 }
 
-func (e *Entry) Duration(key string, val time.Duration) *Entry {
+// Nanosecond encode time.Duration to an string nanoseconds; format sample "1004854348ns".
+func (e *Entry) Nanosecond(key string, d time.Duration) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddInt64(key, int64(val))
+	e.Encoder.AddDuration(key, d, DurationFormatNano)
+	//e.Encoder.AddDuration(key, durationNano(val))
+	return e
+}
+
+// Microsecond encode time.Duration to an string microseconds, format sample "1004854us".
+func (e *Entry) Microsecond(key string, d time.Duration) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Encoder.AddDuration(key, d, DurationFormatMicro)
+	//e.Encoder.AddDuration(key, durationMicro(val))
+	return e
+}
+
+// Millisecond encode time.Duration to an string milliseconds, format sample "1004ms".
+func (e *Entry) Millisecond(key string, d time.Duration) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Encoder.AddDuration(key, d, DurationFormatMilli)
+	//e.Encoder.AddDuration(key, durationMilli(val))
+	return e
+}
+
+// Second encode time.Duration to an string seconds, format sample "1.004854348s".
+func (e *Entry) Second(key string, d time.Duration) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Encoder.AddDuration(key, d, DurationFormatSecond)
+	//e.Encoder.AddDuration(key, durationSecond(val))
+	return e
+}
+
+// Minute encode time.Duration to an string minutes, format sample "10min".
+func (e *Entry) Minute(key string, d time.Duration) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Encoder.AddDuration(key, d, DurationFormatMinute)
+	//e.Encoder.AddDuration(key, durationMinute(val))
+	return e
+}
+
+// Hour encode time.Duration to an string hours, format sample "2h".
+func (e *Entry) Hour(key string, d time.Duration) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Encoder.AddDuration(key, d, DurationFormatHour)
+	//e.Encoder.AddDuration(key, durationHour(val))
 	return e
 }
 
@@ -104,6 +156,7 @@ func (e *Entry) Object(key string, obj ObjectMarshaler) *Entry {
 	return e
 }
 
+// Byte encode the value to an integer formats;
 func (e *Entry) Byte(key string, val byte) *Entry {
 	if e == nil {
 		return nil
@@ -112,6 +165,7 @@ func (e *Entry) Byte(key string, val byte) *Entry {
 	return e
 }
 
+// Bytes encode the value to integer array formats
 func (e *Entry) Bytes(key string, val []byte) *Entry {
 	if e == nil {
 		return nil
@@ -144,27 +198,11 @@ func (e *Entry) Bool(key string, val bool) *Entry {
 	return e
 }
 
-func (e *Entry) Boos(key string, val []bool) *Entry {
+func (e *Entry) Bools(key string, val []bool) *Entry {
 	if e == nil {
 		return nil
 	}
 	e.withError(e.Encoder.AddArray(key, bools(val)))
-	return e
-}
-
-func (e *Entry) Uintptr(key string, val uintptr) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.Encoder.AddUnt64(key, uint64(val))
-	return e
-}
-
-func (e *Entry) Uintptrs(key string, val []uintptr) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.withError(e.Encoder.AddArray(key, uintptrs(val)))
 	return e
 }
 
@@ -408,19 +446,27 @@ func (e *Entry) Complex128s(key string, val []complex128) *Entry {
 	return e
 }
 
-func (e *Entry) Time(key string, val time.Time, layout string) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.Encoder.AddTime(key, val, layout)
-	return e
-}
-
 func (e *Entry) Error(key string, err error) *Entry {
 	if e == nil {
 		return nil
 	}
 	e.Encoder.AddString(key, err.Error())
+	return e
+}
+
+func (e *Entry) Errors(key string, errs []error) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.withError(e.Encoder.AddArray(key, errorArray(errs)))
+	return e
+}
+
+func (e *Entry) Time(key string, val time.Time, layout string) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Encoder.AddTime(key, val, layout)
 	return e
 }
 

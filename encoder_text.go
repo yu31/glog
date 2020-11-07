@@ -77,51 +77,59 @@ func (enc *textEncoder) WriteIn(p []byte) error {
 }
 
 // Implements ObjectEncoder
-func (enc *textEncoder) AddByte(key string, val byte)       { enc.appendKey(key); enc.appendByteRaw(val) }
-func (enc *textEncoder) AddString(key string, val string)   { enc.appendKey(key); enc.appendString(val) }
-func (enc *textEncoder) AddBool(key string, val bool)       { enc.appendKey(key); enc.appendBool(val) }
-func (enc *textEncoder) AddInt64(key string, val int64)     { enc.appendKey(key); enc.appendInt64(val) }
-func (enc *textEncoder) AddUnt64(key string, val uint64)    { enc.appendKey(key); enc.appendUint64(val) }
-func (enc *textEncoder) AddFloat64(key string, val float64) { enc.appendKey(key); enc.appendFloat(val) }
-func (enc *textEncoder) AddTime(key string, val time.Time, layout string) {
+func (enc *textEncoder) AddByte(key string, v byte)       { enc.appendKey(key); enc.appendByteRaw(v) }
+func (enc *textEncoder) AddString(key string, s string)   { enc.appendKey(key); enc.appendString(s) }
+func (enc *textEncoder) AddBool(key string, v bool)       { enc.appendKey(key); enc.appendBool(v) }
+func (enc *textEncoder) AddInt64(key string, i int64)     { enc.appendKey(key); enc.appendInt64(i) }
+func (enc *textEncoder) AddUnt64(key string, i uint64)    { enc.appendKey(key); enc.appendUint64(i) }
+func (enc *textEncoder) AddFloat64(key string, f float64) { enc.appendKey(key); enc.appendFloat(f) }
+func (enc *textEncoder) AddComplex128(key string, c complex128) {
 	enc.appendKey(key)
-	enc.appendTime(val, layout)
+	enc.appendComplex128(c)
 }
-func (enc *textEncoder) AddComplex128(key string, val complex128) {
+func (enc *textEncoder) AddTime(key string, t time.Time, layout string) {
 	enc.appendKey(key)
-	enc.appendComplex128(val)
+	enc.appendTime(t, layout)
 }
-func (enc *textEncoder) AddArray(key string, arr ArrayMarshaler) error {
+func (enc *textEncoder) AddDuration(key string, d time.Duration, layout int8) {
 	enc.appendKey(key)
-	return enc.appendArray(arr)
+	enc.appendDuration(d, layout)
 }
-func (enc *textEncoder) AddObject(key string, obj ObjectMarshaler) error {
+func (enc *textEncoder) AddArray(key string, am ArrayMarshaler) error {
 	enc.appendKey(key)
-	return enc.appendObject(obj)
+	return enc.appendArray(am)
 }
-func (enc *textEncoder) AddInterface(key string, val interface{}) error {
+func (enc *textEncoder) AddObject(key string, om ObjectMarshaler) error {
 	enc.appendKey(key)
-	return enc.appendInterface(val)
+	return enc.appendObject(om)
+}
+func (enc *textEncoder) AddInterface(key string, i interface{}) error {
+	enc.appendKey(key)
+	return enc.appendInterface(i)
 }
 
 // Implements FieldEncoder
-func (enc *textEncoder) AppendByte(val byte)       { enc.addElementSeparator(); enc.appendByteRaw(val) }
-func (enc *textEncoder) AppendString(val string)   { enc.addElementSeparator(); enc.appendString(val) }
-func (enc *textEncoder) AppendBool(val bool)       { enc.addElementSeparator(); enc.appendBool(val) }
-func (enc *textEncoder) AppendInt64(val int64)     { enc.addElementSeparator(); enc.appendInt64(val) }
-func (enc *textEncoder) AppendUnt64(val uint64)    { enc.addElementSeparator(); enc.appendUint64(val) }
-func (enc *textEncoder) AppendFloat64(val float64) { enc.addElementSeparator(); enc.appendFloat(val) }
-func (enc *textEncoder) AppendTime(val time.Time, layout string) {
+func (enc *textEncoder) AppendByte(v byte)       { enc.addElementSeparator(); enc.appendByteRaw(v) }
+func (enc *textEncoder) AppendString(s string)   { enc.addElementSeparator(); enc.appendString(s) }
+func (enc *textEncoder) AppendBool(v bool)       { enc.addElementSeparator(); enc.appendBool(v) }
+func (enc *textEncoder) AppendInt64(i int64)     { enc.addElementSeparator(); enc.appendInt64(i) }
+func (enc *textEncoder) AppendUnt64(i uint64)    { enc.addElementSeparator(); enc.appendUint64(i) }
+func (enc *textEncoder) AppendFloat64(f float64) { enc.addElementSeparator(); enc.appendFloat(f) }
+func (enc *textEncoder) AppendComplex128(c complex128) {
 	enc.addElementSeparator()
-	enc.appendTime(val, layout)
+	enc.appendComplex128(c)
 }
-func (enc *textEncoder) AppendComplex128(val complex128) {
+func (enc *textEncoder) AppendDuration(d time.Duration, layout int8) {
 	enc.addElementSeparator()
-	enc.appendComplex128(val)
+	enc.appendDuration(d, layout)
 }
-func (enc *textEncoder) AppendArray(arr ArrayMarshaler) error   { return enc.appendArray(arr) }
-func (enc *textEncoder) AppendObject(obj ObjectMarshaler) error { return enc.appendObject(obj) }
-func (enc *textEncoder) AppendInterface(val interface{}) error  { return enc.appendInterface(val) }
+func (enc *textEncoder) AppendTime(t time.Time, layout string) {
+	enc.addElementSeparator()
+	enc.appendTime(t, layout)
+}
+func (enc *textEncoder) AppendArray(am ArrayMarshaler) error   { return enc.appendArray(am) }
+func (enc *textEncoder) AppendObject(om ObjectMarshaler) error { return enc.appendObject(om) }
+func (enc *textEncoder) AppendInterface(i interface{}) error   { return enc.appendInterface(i) }
 
 // build buffer
 func (enc *textEncoder) appendKey(key string) {
@@ -149,29 +157,29 @@ func (enc *textEncoder) addElementSeparator() {
 	}
 }
 
-func (enc *textEncoder) appendString(val string) {
-	AppendStringEscape(enc.buf, val)
+func (enc *textEncoder) appendString(s string) {
+	AppendStringEscape(enc.buf, s)
 }
 
-func (enc *textEncoder) appendByteRaw(val byte) {
-	enc.buf.AppendUint(uint64(val))
+func (enc *textEncoder) appendByteRaw(v byte) {
+	enc.buf.AppendUint(uint64(v))
 }
 
-func (enc *textEncoder) appendInt64(val int64) {
-	enc.buf.AppendInt(val)
+func (enc *textEncoder) appendInt64(i int64) {
+	enc.buf.AppendInt(i)
 }
 
-func (enc *textEncoder) appendUint64(val uint64) {
-	enc.buf.AppendUint(val)
+func (enc *textEncoder) appendUint64(i uint64) {
+	enc.buf.AppendUint(i)
 }
 
-func (enc *textEncoder) appendBool(val bool) {
-	enc.buf.AppendBool(val)
+func (enc *textEncoder) appendBool(v bool) {
+	enc.buf.AppendBool(v)
 }
 
 func (enc *textEncoder) appendTime(t time.Time, layout string) {
 	switch layout {
-	case TimeFormatUnix:
+	case TimeFormatUnixSecond:
 		enc.buf.AppendInt(t.Unix())
 	case TimeFormatUnixMilli:
 		enc.buf.AppendInt(t.UnixNano() / 1e6)
@@ -184,22 +192,26 @@ func (enc *textEncoder) appendTime(t time.Time, layout string) {
 	}
 }
 
-func (enc *textEncoder) appendFloat(val float64) {
+func (enc *textEncoder) appendDuration(d time.Duration, layout int8) {
+	AppendDuration(enc.buf, d, layout)
+}
+
+func (enc *textEncoder) appendFloat(f float64) {
 	switch {
-	case math.IsNaN(val):
-		enc.buf.AppendString(`"NaN"`)
-	case math.IsInf(val, 1):
-		enc.buf.AppendString(`"+Inf"`)
-	case math.IsInf(val, -1):
-		enc.buf.AppendString(`"-Inf"`)
+	case math.IsNaN(f):
+		enc.buf.AppendString(`NaN`)
+	case math.IsInf(f, 1):
+		enc.buf.AppendString(`+Inf`)
+	case math.IsInf(f, -1):
+		enc.buf.AppendString(`-Inf`)
 	default:
-		enc.buf.AppendFloat(val, 64)
+		enc.buf.AppendFloat(f, 64)
 	}
 }
 
-func (enc *textEncoder) appendComplex128(val complex128) {
+func (enc *textEncoder) appendComplex128(c complex128) {
 	// Cast to a platform-independent, fixed-size type.
-	r, i := float64(real(val)), float64(imag(val))
+	r, i := float64(real(c)), float64(imag(c))
 	// Because we're always in a quoted string, we can use strconv without
 	// special-casing NaN and +/-Inf.
 	enc.buf.AppendByte('"')
@@ -210,21 +222,21 @@ func (enc *textEncoder) appendComplex128(val complex128) {
 	enc.buf.AppendByte('"')
 }
 
-func (enc *textEncoder) appendArray(arr ArrayMarshaler) error {
+func (enc *textEncoder) appendArray(am ArrayMarshaler) error {
 	enc.buf.AppendByte('[')
-	err := arr.MarshalLogArray(enc)
+	err := am.MarshalArray(enc)
 	enc.buf.AppendByte(']')
 	return err
 }
 
-func (enc *textEncoder) appendObject(obj ObjectMarshaler) error {
+func (enc *textEncoder) appendObject(om ObjectMarshaler) error {
 	enc.buf.AppendByte('{')
-	err := obj.MarshalLogObject(enc)
+	err := om.MarshalObject(enc)
 	enc.buf.AppendByte('}')
 	return err
 }
 
-func (enc *textEncoder) appendInterface(val interface{}) error {
-	enc.appendString(fmt.Sprintf("%v", val))
+func (enc *textEncoder) appendInterface(i interface{}) error {
+	enc.appendString(fmt.Sprintf("%v", i))
 	return nil
 }

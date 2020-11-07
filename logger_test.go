@@ -2,6 +2,8 @@ package glog
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"os"
 	"reflect"
 	"runtime"
@@ -12,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLogger_NewDefault(t *testing.T) {
+func TestLoggerNewDefault(t *testing.T) {
 	l := NewDefault()
 	require.Equal(t, l.level, DebugLevel)
 	require.Equal(t, l.timeLayout, defaultTimeLayout)
@@ -23,7 +25,7 @@ func TestLogger_NewDefault(t *testing.T) {
 	require.True(t, reflect.DeepEqual(l.errorOutput, os.Stderr))
 }
 
-func TestLogger_Output(t *testing.T) {
+func TestLoggerOutput(t *testing.T) {
 	l := NewDefault().WithCaller(true)
 
 	l.Info().Msg("HelloWorld").Fire()
@@ -32,7 +34,7 @@ func TestLogger_Output(t *testing.T) {
 	l.WithFields().AddString("extra_k2", "extra-v2")
 
 	l.Info().
-		Msg("test logger out").
+		Msg("Test logger out").
 		String("String", "Value").
 		Strings("Strings", []string{"a", "b", "c"}).
 		Byte("Byte", 'a').
@@ -44,7 +46,6 @@ func TestLogger_Output(t *testing.T) {
 		Strings("Strings", []string{"a", "b", "c"}).
 		Bytes("Bytes", []byte("HEllO")).
 		Bool("Bool", true).
-		Duration("Duration", time.Duration(1)).
 		Time("Time", time.Now(), defaultTimeLayout).
 		Any("Interface", []string{"i1", "i2", "i3"}).
 		Fire()
@@ -87,8 +88,7 @@ func TestLogger_WithCaller(t *testing.T) {
 func TestLogger_WithFields(t *testing.T) {
 	var b bytes.Buffer
 
-	l := NewDefault()
-	l.WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
 
 	l.WithFields().AddString("req-k1", "req-v1")
 	l.WithFields().AddString("dup-key", "dup-v1")
@@ -109,8 +109,7 @@ func TestLogger_WithFields(t *testing.T) {
 func TestLogger_Clone(t *testing.T) {
 	var b bytes.Buffer
 
-	l := NewDefault()
-	l.WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
 	l.WithFields().AddString("filed-k1", "filed-v1")
 
 	nl := l.Clone()
@@ -155,4 +154,36 @@ func TestLogger_Clone(t *testing.T) {
 	require.Contains(t, s, "filed-v1")
 	require.Contains(t, s, "filed-k2")
 	require.Contains(t, s, "filed-v2")
+}
+
+func TestLoggerWithJSONEncoder(t *testing.T) {
+	var b bytes.Buffer
+	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExecutor(MatchExecutor(&b, nil)).WithCaller(true)
+
+	l.Info().
+		Msg("test logger out").
+		String("String", "Value").
+		Strings("Strings", []string{"a", "b", "c"}).
+		Byte("Byte", 'a').
+		Bytes("Bytes", []byte("abc")).
+		Int64("Int64", 64).
+		Int64s("Int64s", []int64{641, 642, 643}).
+		Complex128("Complex128", complex(1, 2)).
+		Float64("Float64", 99.99).
+		Strings("Strings", []string{"a", "b", "c"}).
+		Bytes("Bytes", []byte("HEllO")).
+		Bool("Bool", true).
+		Time("Time", time.Now(), time.RFC3339Nano).
+		Any("Interface1", []string{"i1", "i2", "i3"}).
+		Any("Interface2", nil).
+		Fire()
+
+	require.Greater(t, b.Len(), 0)
+	c := b.Bytes()[:b.Len()-1]
+
+	fmt.Println(string(c))
+
+	m := make(map[string]interface{})
+	err := json.Unmarshal(c, &m)
+	require.Nil(t, err, "%q", string(c))
 }
