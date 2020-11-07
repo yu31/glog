@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"runtime"
-	"strconv"
 	"time"
 
 	"github.com/DataWorkbench/glog/pkg/buffer"
@@ -63,7 +62,9 @@ func (enc *textEncoder) AddCaller(skip int) {
 	}
 	enc.addElementSeparator()
 	enc.buf.AppendByte('(')
-	enc.appendString(file + ":" + strconv.Itoa(line))
+	enc.appendString(file)
+	enc.buf.AppendByte(':')
+	enc.buf.AppendInt(int64(line))
 	enc.buf.AppendByte(')')
 
 }
@@ -224,19 +225,26 @@ func (enc *textEncoder) appendComplex128(c complex128) {
 
 func (enc *textEncoder) appendArray(am ArrayMarshaler) error {
 	enc.buf.AppendByte('[')
-	err := am.MarshalArray(enc)
+	err := am.MarshalGLogArray(enc)
 	enc.buf.AppendByte(']')
 	return err
 }
 
 func (enc *textEncoder) appendObject(om ObjectMarshaler) error {
 	enc.buf.AppendByte('{')
-	err := om.MarshalObject(enc)
+	err := om.MarshalGLogObject(enc)
 	enc.buf.AppendByte('}')
 	return err
 }
 
 func (enc *textEncoder) appendInterface(i interface{}) error {
-	enc.appendString(fmt.Sprintf("%v", i))
+	switch m := i.(type) {
+	case ArrayMarshaler:
+		return enc.appendArray(m)
+	case ObjectMarshaler:
+		return enc.appendObject(m)
+	default:
+		enc.appendString(fmt.Sprintf("%+v", i))
+	}
 	return nil
 }

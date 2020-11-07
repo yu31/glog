@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"runtime"
-	"strconv"
 	"time"
 
 	"github.com/DataWorkbench/glog/pkg/buffer"
@@ -61,7 +60,14 @@ func (enc *jsonEncoder) AddCaller(skip int) {
 		return
 	}
 	enc.appendKey("caller")
-	enc.appendString(file + ":" + strconv.Itoa(line))
+	enc.addElementSeparator()
+	enc.buf.AppendByte('"')
+	AppendStringEscape(enc.buf, file)
+	enc.buf.AppendByte(':')
+	enc.buf.AppendInt(int64(line))
+	enc.buf.AppendByte('"')
+
+	//enc.appendString(file + ":" + strconv.Itoa(line))
 }
 func (enc *jsonEncoder) WriteIn(p []byte) error {
 	if len(p) == 0 {
@@ -225,24 +231,37 @@ func (enc *jsonEncoder) appendComplex128(c complex128) {
 
 func (enc *jsonEncoder) appendArray(am ArrayMarshaler) error {
 	enc.buf.AppendByte('[')
-	err := am.MarshalArray(enc)
+	err := am.MarshalGLogArray(enc)
 	enc.buf.AppendByte(']')
 	return err
 }
 
 func (enc *jsonEncoder) appendObject(om ObjectMarshaler) error {
 	enc.buf.AppendByte('{')
-	err := om.MarshalObject(enc)
+	err := om.MarshalGLogObject(enc)
 	enc.buf.AppendByte('}')
 	return err
 }
 
 func (enc *jsonEncoder) appendInterface(i interface{}) error {
-	b, err := json.Marshal(i)
+	var err error
+	var b []byte
+
+	switch m := i.(type) {
+	case ArrayMarshaler:
+		return enc.appendArray(m)
+	case ObjectMarshaler:
+		return enc.appendObject(m)
+	case json.Marshaler:
+		b, err = m.MarshalJSON()
+	default:
+		b, err = json.Marshal(i)
+	}
+
 	if err != nil {
-		enc.appendString(fmt.Sprintf("%v", i))
+		enc.appendString(fmt.Sprintf("%+v", i))
 		return err
 	}
-	_, _ = enc.buf.Write(b)
-	return nil
+	_, err = enc.buf.Write(b)
+	return err
 }
