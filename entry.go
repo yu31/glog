@@ -142,22 +142,6 @@ func (e *Entry) Hour(key string, d time.Duration) *Entry {
 	return e
 }
 
-func (e *Entry) Array(key string, am ArrayMarshaler) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.withError(e.Encoder.AddArray(key, am))
-	return e
-}
-
-func (e *Entry) Object(key string, om ObjectMarshaler) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.withError(e.Encoder.AddObject(key, om))
-	return e
-}
-
 // Byte encode the value to an integer number.
 func (e *Entry) Byte(key string, b byte) *Entry {
 	if e == nil {
@@ -205,22 +189,6 @@ func (e *Entry) Bools(key string, vv []bool) *Entry {
 		return nil
 	}
 	e.withError(e.Encoder.AddArray(key, bools(vv)))
-	return e
-}
-
-func (e *Entry) Rune(key string, v rune) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.Encoder.AddInt64(key, int64(v))
-	return e
-}
-
-func (e *Entry) Runes(key string, vv []rune) *Entry {
-	if e == nil {
-		return nil
-	}
-	e.withError(e.Encoder.AddArray(key, runes(vv)))
 	return e
 }
 
@@ -469,6 +437,22 @@ func (e *Entry) Time(key string, t time.Time, layout string) *Entry {
 		return nil
 	}
 	e.Encoder.AddTime(key, t, layout)
+	return e
+}
+
+func (e *Entry) Array(key string, am ArrayMarshaler) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.withError(e.Encoder.AddArray(key, am))
+	return e
+}
+
+func (e *Entry) Object(key string, om ObjectMarshaler) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.withError(e.Encoder.AddObject(key, om))
 	return e
 }
 

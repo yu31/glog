@@ -135,15 +135,6 @@ func (vv uint8s) MarshalArray(arr ArrayEncoder) error {
 	return nil
 }
 
-type runes []rune
-
-func (vv runes) MarshalArray(arr ArrayEncoder) error {
-	for i := range vv {
-		arr.AppendInt64(int64(vv[i]))
-	}
-	return nil
-}
-
 type stringArray []string
 
 func (vv stringArray) MarshalArray(arr ArrayEncoder) error {
