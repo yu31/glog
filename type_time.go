@@ -41,13 +41,14 @@ const (
 
 const (
 	nanoSuffix   = "ns"
-	microSuffix  = "us"
+	microSuffix  = "µs"
 	milliSuffix  = "ms"
 	secondSuffix = "s"
 	minuteSuffix = "min"
 	hourSuffix   = "h"
 )
 
+// AppendDuration encode the time.Duration to a strings by specified layout
 func AppendDuration(buf *buffer.Buffer, d time.Duration, layout int8) {
 	switch layout {
 	case DurationFormatNano:

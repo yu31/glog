@@ -176,3 +176,69 @@ func TestEntry_Duration_WithJSON(t *testing.T) {
 
 	require.Equal(t, eb.Len(), 0)
 }
+
+func TestEntry_Raw_WithText(t *testing.T) {
+	var b bytes.Buffer
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
+
+	data := struct {
+		Name   string
+		Number int64
+	}{
+		Name:   "n1",
+		Number: 1,
+	}
+	bd, err := json.Marshal(&data)
+	require.Nil(t, err)
+
+	l.Info().String("key1", string(bd)).Fire()
+	require.Contains(t, b.String(), "\\")
+
+	b.Reset()
+	l.Info().RawBytes("key2", bd).RawString("key3", string(bd)).Fire()
+	require.NotContains(t, b.String(), "\\")
+}
+
+func TestEntry_Raw_WithJSON(t *testing.T) {
+	var b bytes.Buffer
+	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder)
+
+	data := struct {
+		Name   string
+		Number int64
+	}{
+		Name:   "n1",
+		Number: 1,
+	}
+
+	bd, err := json.Marshal(&data)
+	require.Nil(t, err)
+
+	l.Info().String("key1", string(bd)).RawBytes("key2", bd).RawString("key3", string(bd)).Fire()
+
+	require.Greater(t, b.Len(), 0)
+
+	b1 := b.Bytes()[0 : b.Len()-1]
+
+	var m map[string]interface{}
+	err = json.Unmarshal(b1, &m)
+	require.Nil(t, err)
+
+	// Expected "key1" is string
+	k1, ok := m["key1"]
+	require.True(t, ok)
+	_, ok = k1.(string)
+	require.True(t, ok)
+
+	// Expected "key2" is map
+	k2, ok := m["key2"]
+	require.True(t, ok)
+	_, ok = k2.(map[string]interface{})
+	require.True(t, ok)
+
+	// Expected "key3" is map
+	k3, ok := m["key3"]
+	require.True(t, ok)
+	_, ok = k3.(map[string]interface{})
+	require.True(t, ok)
+}

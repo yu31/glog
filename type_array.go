@@ -135,20 +135,20 @@ func (vv uint8s) MarshalGLogArray(ae ArrayEncoder) error {
 	return nil
 }
 
-type stringArray []string
-
-func (vv stringArray) MarshalGLogArray(ae ArrayEncoder) error {
-	for i := range vv {
-		ae.AppendString(vv[i])
-	}
-	return nil
-}
-
 type byteArray []byte
 
 func (vv byteArray) MarshalGLogArray(ae ArrayEncoder) error {
 	for i := range vv {
 		ae.AppendByte(vv[i])
+	}
+	return nil
+}
+
+type stringArray []string
+
+func (vv stringArray) MarshalGLogArray(ae ArrayEncoder) error {
+	for i := range vv {
+		ae.AppendString(vv[i])
 	}
 	return nil
 }

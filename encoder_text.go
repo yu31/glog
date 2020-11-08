@@ -42,15 +42,15 @@ func (enc *textEncoder) AddBeginMarker() {}
 func (enc *textEncoder) AddEndMarker()   {}
 func (enc *textEncoder) AddLineBreak()   { enc.buf.AppendByte('\n') }
 func (enc *textEncoder) AddMsg(msg string) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendString(msg)
 }
 func (enc *textEncoder) AddEntryTime(t time.Time, layout string) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendTime(t, layout)
 }
 func (enc *textEncoder) AddLevel(level Level) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.buf.AppendByte('[')
 	enc.appendString(level.String())
 	enc.buf.AppendByte(']')
@@ -60,7 +60,7 @@ func (enc *textEncoder) AddCaller(skip int) {
 	if !ok {
 		return
 	}
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.buf.AppendByte('(')
 	enc.appendString(file)
 	enc.buf.AppendByte(':')
@@ -72,88 +72,98 @@ func (enc *textEncoder) WriteIn(p []byte) error {
 	if len(p) == 0 {
 		return nil
 	}
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	_, err := enc.buf.Write(p)
 	return err
 }
 
 // Implements ObjectEncoder
-func (enc *textEncoder) AddByte(key string, b byte)       { enc.appendKey(key); enc.appendByteInt(b) }
-func (enc *textEncoder) AddString(key string, s string)   { enc.appendKey(key); enc.appendString(s) }
-func (enc *textEncoder) AddBool(key string, v bool)       { enc.appendKey(key); enc.appendBool(v) }
-func (enc *textEncoder) AddInt64(key string, i int64)     { enc.appendKey(key); enc.appendInt64(i) }
-func (enc *textEncoder) AddUnt64(key string, i uint64)    { enc.appendKey(key); enc.appendUint64(i) }
-func (enc *textEncoder) AddFloat64(key string, f float64) { enc.appendKey(key); enc.appendFloat(f) }
-func (enc *textEncoder) AddComplex128(key string, c complex128) {
-	enc.appendKey(key)
+func (enc *textEncoder) AddByte(k string, b byte)       { enc.appendKey(k); enc.appendByteInt(b) }
+func (enc *textEncoder) AddString(k string, s string)   { enc.appendKey(k); enc.appendString(s) }
+func (enc *textEncoder) AddBool(k string, v bool)       { enc.appendKey(k); enc.appendBool(v) }
+func (enc *textEncoder) AddInt64(k string, i int64)     { enc.appendKey(k); enc.appendInt64(i) }
+func (enc *textEncoder) AddUnt64(k string, i uint64)    { enc.appendKey(k); enc.appendUint64(i) }
+func (enc *textEncoder) AddFloat64(k string, f float64) { enc.appendKey(k); enc.appendFloat(f) }
+func (enc *textEncoder) AddComplex128(k string, c complex128) {
+	enc.appendKey(k)
 	enc.appendComplex128(c)
 }
-func (enc *textEncoder) AddTime(key string, t time.Time, layout string) {
-	enc.appendKey(key)
+func (enc *textEncoder) AddRawBytes(k string, bs []byte) { enc.appendKey(k); enc.appendRawBytes(bs) }
+func (enc *textEncoder) AddRawString(k string, s string) { enc.appendKey(k); enc.appendRawString(s) }
+func (enc *textEncoder) AddTime(k string, t time.Time, layout string) {
+	enc.appendKey(k)
 	enc.appendTime(t, layout)
 }
-func (enc *textEncoder) AddDuration(key string, d time.Duration, layout int8) {
-	enc.appendKey(key)
+func (enc *textEncoder) AddDuration(k string, d time.Duration, layout int8) {
+	enc.appendKey(k)
 	enc.appendDuration(d, layout)
 }
-func (enc *textEncoder) AddArray(key string, am ArrayMarshaler) error {
-	enc.appendKey(key)
+func (enc *textEncoder) AddArray(k string, am ArrayMarshaler) error {
+	enc.appendKey(k)
 	return enc.appendArray(am)
 }
-func (enc *textEncoder) AddObject(key string, om ObjectMarshaler) error {
-	enc.appendKey(key)
+func (enc *textEncoder) AddObject(k string, om ObjectMarshaler) error {
+	enc.appendKey(k)
 	return enc.appendObject(om)
 }
-func (enc *textEncoder) AddInterface(key string, i interface{}) error {
-	enc.appendKey(key)
+func (enc *textEncoder) AddInterface(k string, i interface{}) error {
+	enc.appendKey(k)
 	return enc.appendInterface(i)
 }
 
 // Implements FieldEncoder
-func (enc *textEncoder) AppendByte(v byte)       { enc.addElementSeparator(); enc.appendByteInt(v) }
-func (enc *textEncoder) AppendString(s string)   { enc.addElementSeparator(); enc.appendString(s) }
-func (enc *textEncoder) AppendBool(v bool)       { enc.addElementSeparator(); enc.appendBool(v) }
-func (enc *textEncoder) AppendInt64(i int64)     { enc.addElementSeparator(); enc.appendInt64(i) }
-func (enc *textEncoder) AppendUnt64(i uint64)    { enc.addElementSeparator(); enc.appendUint64(i) }
-func (enc *textEncoder) AppendFloat64(f float64) { enc.addElementSeparator(); enc.appendFloat(f) }
+func (enc *textEncoder) AppendByte(v byte)       { enc.appendElementSeparator(); enc.appendByteInt(v) }
+func (enc *textEncoder) AppendString(s string)   { enc.appendElementSeparator(); enc.appendString(s) }
+func (enc *textEncoder) AppendBool(v bool)       { enc.appendElementSeparator(); enc.appendBool(v) }
+func (enc *textEncoder) AppendInt64(i int64)     { enc.appendElementSeparator(); enc.appendInt64(i) }
+func (enc *textEncoder) AppendUnt64(i uint64)    { enc.appendElementSeparator(); enc.appendUint64(i) }
+func (enc *textEncoder) AppendFloat64(f float64) { enc.appendElementSeparator(); enc.appendFloat(f) }
 func (enc *textEncoder) AppendComplex128(c complex128) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendComplex128(c)
 }
+func (enc *textEncoder) AppendRawBytes(bs []byte) {
+	enc.appendElementSeparator()
+	enc.appendRawBytes(bs)
+}
+func (enc *textEncoder) AppendRawString(s string) {
+	enc.appendElementSeparator()
+	enc.appendRawString(s)
+}
 func (enc *textEncoder) AppendDuration(d time.Duration, layout int8) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendDuration(d, layout)
 }
 func (enc *textEncoder) AppendTime(t time.Time, layout string) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendTime(t, layout)
 }
 func (enc *textEncoder) AppendArray(am ArrayMarshaler) error {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	return enc.appendArray(am)
 }
 func (enc *textEncoder) AppendObject(om ObjectMarshaler) error {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	return enc.appendObject(om)
 }
 func (enc *textEncoder) AppendInterface(i interface{}) error {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	return enc.appendInterface(i)
 }
 
-// build buffer
+// Add k between ElementSeparator and FieldSeparator
 func (enc *textEncoder) appendKey(key string) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendString(key)
-	enc.addFieldSeparator()
+	enc.appendFieldSeparator()
 }
 
-func (enc *textEncoder) addFieldSeparator() {
+func (enc *textEncoder) appendFieldSeparator() {
 	enc.buf.AppendByte('=')
 }
 
 // Add elements separator
-func (enc *textEncoder) addElementSeparator() {
+func (enc *textEncoder) appendElementSeparator() {
 	last := enc.buf.Len() - 1
 	if last < 0 {
 		return
@@ -173,6 +183,14 @@ func (enc *textEncoder) appendString(s string) {
 
 func (enc *textEncoder) appendByteInt(b byte) {
 	enc.buf.AppendUint(uint64(b))
+}
+
+func (enc *textEncoder) appendRawBytes(bs []byte) {
+	_, _ = enc.buf.Write(bs)
+}
+
+func (enc *textEncoder) appendRawString(s string) {
+	enc.buf.AppendString(s)
 }
 
 func (enc *textEncoder) appendInt64(i int64) {
@@ -224,12 +242,10 @@ func (enc *textEncoder) appendComplex128(c complex128) {
 	r, i := float64(real(c)), float64(imag(c))
 	// Because we're always in a quoted string, we can use strconv without
 	// special-casing NaN and +/-Inf.
-	enc.buf.AppendByte('"')
 	enc.buf.AppendFloat(r, 64)
 	enc.buf.AppendByte('+')
 	enc.buf.AppendFloat(i, 64)
 	enc.buf.AppendByte('i')
-	enc.buf.AppendByte('"')
 }
 
 func (enc *textEncoder) appendArray(am ArrayMarshaler) error {

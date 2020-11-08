@@ -60,7 +60,7 @@ func (enc *jsonEncoder) AddCaller(skip int) {
 		return
 	}
 	enc.appendKey("caller")
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.buf.AppendByte('"')
 	AppendStringEscape(enc.buf, file)
 	enc.buf.AppendByte(':')
@@ -78,82 +78,93 @@ func (enc *jsonEncoder) WriteIn(p []byte) error {
 }
 
 // Implements ObjectEncoder
-func (enc *jsonEncoder) AddByte(key string, b byte)       { enc.appendKey(key); enc.appendByteInt(b) }
-func (enc *jsonEncoder) AddString(key string, s string)   { enc.appendKey(key); enc.appendString(s) }
-func (enc *jsonEncoder) AddBool(key string, v bool)       { enc.appendKey(key); enc.appendBool(v) }
-func (enc *jsonEncoder) AddInt64(key string, i int64)     { enc.appendKey(key); enc.appendInt64(i) }
-func (enc *jsonEncoder) AddUnt64(key string, i uint64)    { enc.appendKey(key); enc.appendUint64(i) }
-func (enc *jsonEncoder) AddFloat64(key string, f float64) { enc.appendKey(key); enc.appendFloat(f) }
-func (enc *jsonEncoder) AddComplex128(key string, c complex128) {
-	enc.appendKey(key)
+func (enc *jsonEncoder) AddByte(k string, b byte)       { enc.appendKey(k); enc.appendByteInt(b) }
+func (enc *jsonEncoder) AddString(k string, s string)   { enc.appendKey(k); enc.appendString(s) }
+func (enc *jsonEncoder) AddBool(k string, v bool)       { enc.appendKey(k); enc.appendBool(v) }
+func (enc *jsonEncoder) AddInt64(k string, i int64)     { enc.appendKey(k); enc.appendInt64(i) }
+func (enc *jsonEncoder) AddUnt64(k string, i uint64)    { enc.appendKey(k); enc.appendUint64(i) }
+func (enc *jsonEncoder) AddFloat64(k string, f float64) { enc.appendKey(k); enc.appendFloat(f) }
+func (enc *jsonEncoder) AddComplex128(k string, c complex128) {
+	enc.appendKey(k)
 	enc.appendComplex128(c)
 }
-func (enc *jsonEncoder) AddTime(key string, t time.Time, layout string) {
-	enc.appendKey(key)
+func (enc *jsonEncoder) AddRawBytes(k string, bs []byte) { enc.appendKey(k); enc.appendRawBytes(bs) }
+func (enc *jsonEncoder) AddRawString(k string, s string) { enc.appendKey(k); enc.appendRawString(s) }
+func (enc *jsonEncoder) AddTime(k string, t time.Time, layout string) {
+	enc.appendKey(k)
 	enc.appendTime(t, layout)
 }
-func (enc *jsonEncoder) AddDuration(key string, d time.Duration, layout int8) {
-	enc.appendKey(key)
+func (enc *jsonEncoder) AddDuration(k string, d time.Duration, layout int8) {
+	enc.appendKey(k)
 	enc.appendDuration(d, layout)
 }
-func (enc *jsonEncoder) AddArray(key string, am ArrayMarshaler) error {
-	enc.appendKey(key)
+func (enc *jsonEncoder) AddArray(k string, am ArrayMarshaler) error {
+	enc.appendKey(k)
 	return enc.appendArray(am)
 }
-func (enc *jsonEncoder) AddObject(key string, om ObjectMarshaler) error {
-	enc.appendKey(key)
+func (enc *jsonEncoder) AddObject(k string, om ObjectMarshaler) error {
+	enc.appendKey(k)
 	return enc.appendObject(om)
 }
-func (enc *jsonEncoder) AddInterface(key string, i interface{}) error {
-	enc.appendKey(key)
+func (enc *jsonEncoder) AddInterface(k string, i interface{}) error {
+	enc.appendKey(k)
 	return enc.appendInterface(i)
 }
 
 // Implements FieldEncoder
-func (enc *jsonEncoder) AppendByte(b byte)       { enc.addElementSeparator(); enc.appendByteInt(b) }
-func (enc *jsonEncoder) AppendString(s string)   { enc.addElementSeparator(); enc.appendString(s) }
-func (enc *jsonEncoder) AppendBool(v bool)       { enc.addElementSeparator(); enc.appendBool(v) }
-func (enc *jsonEncoder) AppendInt64(i int64)     { enc.addElementSeparator(); enc.appendInt64(i) }
-func (enc *jsonEncoder) AppendUnt64(i uint64)    { enc.addElementSeparator(); enc.appendUint64(i) }
-func (enc *jsonEncoder) AppendFloat64(f float64) { enc.addElementSeparator(); enc.appendFloat(f) }
+func (enc *jsonEncoder) AppendByte(b byte)       { enc.appendElementSeparator(); enc.appendByteInt(b) }
+func (enc *jsonEncoder) AppendString(s string)   { enc.appendElementSeparator(); enc.appendString(s) }
+func (enc *jsonEncoder) AppendBool(v bool)       { enc.appendElementSeparator(); enc.appendBool(v) }
+func (enc *jsonEncoder) AppendInt64(i int64)     { enc.appendElementSeparator(); enc.appendInt64(i) }
+func (enc *jsonEncoder) AppendUnt64(i uint64)    { enc.appendElementSeparator(); enc.appendUint64(i) }
+func (enc *jsonEncoder) AppendFloat64(f float64) { enc.appendElementSeparator(); enc.appendFloat(f) }
 func (enc *jsonEncoder) AppendComplex128(c complex128) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendComplex128(c)
 }
+func (enc *jsonEncoder) AppendRawBytes(bs []byte) {
+	enc.appendElementSeparator()
+	enc.appendRawBytes(bs)
+}
+func (enc *jsonEncoder) AppendRawString(s string) {
+	enc.appendElementSeparator()
+	enc.appendRawString(s)
+}
 func (enc *jsonEncoder) AppendDuration(d time.Duration, layout int8) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendDuration(d, layout)
 }
 func (enc *jsonEncoder) AppendTime(t time.Time, layout string) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendTime(t, layout)
 }
 func (enc *jsonEncoder) AppendArray(am ArrayMarshaler) error {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	return enc.appendArray(am)
 }
 func (enc *jsonEncoder) AppendObject(om ObjectMarshaler) error {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	return enc.appendObject(om)
 }
 func (enc *jsonEncoder) AppendInterface(i interface{}) error {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	return enc.appendInterface(i)
 }
 
-// build buffer
+// Add k between ElementSeparator and FieldSeparator
 func (enc *jsonEncoder) appendKey(key string) {
-	enc.addElementSeparator()
+	enc.appendElementSeparator()
 	enc.appendString(key)
-	enc.addFieldSeparator()
+	enc.appendFieldSeparator()
 }
 
-func (enc *jsonEncoder) addFieldSeparator() {
+// Add field separator
+func (enc *jsonEncoder) appendFieldSeparator() {
 	enc.buf.AppendByte(':')
 }
 
 // Add elements separator
-func (enc *jsonEncoder) addElementSeparator() {
+func (enc *jsonEncoder) appendElementSeparator() {
 	last := enc.buf.Len() - 1
 	if last < 0 {
 		return
@@ -175,6 +186,14 @@ func (enc *jsonEncoder) appendString(s string) {
 
 func (enc *jsonEncoder) appendByteInt(b byte) {
 	enc.buf.AppendUint(uint64(b))
+}
+
+func (enc *jsonEncoder) appendRawBytes(bs []byte) {
+	_, _ = enc.buf.Write(bs)
+}
+
+func (enc *jsonEncoder) appendRawString(s string) {
+	enc.buf.AppendString(s)
 }
 
 func (enc *jsonEncoder) appendInt64(i int64) {

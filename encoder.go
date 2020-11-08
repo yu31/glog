@@ -7,13 +7,19 @@ type EncoderFunc func() Encoder
 
 // FieldEncoder used to add single elements
 type FieldEncoder interface {
-	AppendByte(b byte) // AppendByte encode b to the form of binary
+	// AppendByte the value to an integer format.
+	AppendByte(b byte)
 	AppendString(s string)
 	AppendBool(v bool)
 	AppendInt64(i int64)
 	AppendUnt64(i uint64)
 	AppendFloat64(f float64)
 	AppendComplex128(c complex128)
+
+	// AppendRawBytes for adds already serialized data.
+	AppendRawBytes(bs []byte)
+	// AppendRawString for adds already serialized data.
+	AppendRawString(s string)
 
 	AppendTime(t time.Time, layout string)
 	AppendDuration(d time.Duration, layout int8)
@@ -33,23 +39,29 @@ type ArrayEncoder interface {
 
 // ObjectEncoder used to add an k/v field
 type ObjectEncoder interface {
-	AddByte(key string, b byte) // AddByte encode b to the form of binary
-	AddString(key string, s string)
-	AddBool(key string, v bool)
-	AddInt64(key string, i int64)
-	AddUnt64(key string, i uint64)
-	AddFloat64(key string, f float64)
-	AddComplex128(key string, c complex128)
+	// AddByte the value to an integer format.
+	AddByte(k string, b byte)
+	AddString(k string, s string)
+	AddBool(k string, v bool)
+	AddInt64(k string, i int64)
+	AddUnt64(k string, i uint64)
+	AddFloat64(k string, f float64)
+	AddComplex128(k string, c complex128)
 
-	AddTime(key string, t time.Time, layout string)
-	AddDuration(key string, d time.Duration, layout int8)
+	// AddRawBytes for adds already serialized data under key.
+	AddRawBytes(k string, bs []byte)
+	// AddRawString for adds already serialized data under key.
+	AddRawString(k string, s string)
 
-	AddArray(key string, am ArrayMarshaler) error
-	AddObject(key string, om ObjectMarshaler) error
+	AddTime(k string, t time.Time, layout string)
+	AddDuration(k string, d time.Duration, layout int8)
+
+	AddArray(k string, am ArrayMarshaler) error
+	AddObject(k string, om ObjectMarshaler) error
 
 	// AddInterface uses reflection to serialize arbitrary objects, so it can be
 	// slow and allocation-heavy.
-	AddInterface(key string, i interface{}) error
+	AddInterface(k string, i interface{}) error
 }
 
 // BuildEncoder used to add some specific fields
