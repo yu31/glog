@@ -16,9 +16,9 @@ type Entry struct {
 // newEntry will create a new entry with level and fields.
 func newEntry(l *Logger, level Level) *Entry {
 	e := &Entry{
-		l:       l,
 		Level:   level,
 		Encoder: l.encoderFunc(),
+		l:       l,
 	}
 	e.encodeHeads()
 	return e
@@ -29,7 +29,7 @@ func (e *Entry) withError(err error) {
 	if err == nil {
 		return
 	}
-	_, _ = fmt.Fprintf(e.l.errorOutput, "entry error: %v\n", err)
+	_, _ = fmt.Fprintf(e.l.errorOutput, "%s [inner] handle log entry error: %v\n", time.Now().Format(e.l.timeLayout), err)
 }
 
 func (e *Entry) encodeHeads() {
@@ -52,8 +52,8 @@ func (e *Entry) free() {
 		return
 	}
 	e.withError(e.Encoder.Close())
-	e.l = nil
 	e.Encoder = nil
+	e.l = nil
 }
 
 // Fire sends the *Entry to Logger's executor.

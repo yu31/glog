@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	tp = buffer.NewPool()
+	_textBufferPool = buffer.NewPool()
 )
 
 // TextEncoder return a new Encoder implements by textEncoder
@@ -18,7 +18,7 @@ func TextEncoder() Encoder { return newTextEncoder() }
 
 func newTextEncoder() *textEncoder {
 	enc := &textEncoder{
-		buf: tp.Get(),
+		buf: _textBufferPool.Get(),
 	}
 	return enc
 }

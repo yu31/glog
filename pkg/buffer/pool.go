@@ -3,9 +3,9 @@ package buffer
 import "sync"
 
 const (
-	size = 256 // by default, create 256 bits buffers
+	size = 512 // by default, create 256 bits buffers
 	//maxSize = 1 << 16 // 64KiB
-	maxSize = 1 << 14 // 16KiB
+	maxSize = 1 << 15 // 32KiB
 )
 
 // A Pool is a type-safe wrapper around a sync.Pool.

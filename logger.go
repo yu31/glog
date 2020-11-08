@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 )
 
 // Logger define the logger.
@@ -18,15 +19,15 @@ type Logger struct {
 	// caller set whether adds caller info in log message
 	caller bool
 
+	// encoderFunc used to get a new encoder in log entry
+	// Notes: change the encoderFunc will cause the fields empty and rebuild
+	encoderFunc EncoderFunc
+
 	// fields add fixed field into every log entry
 	fields Encoder
 
 	// executor used by every entry
 	executor Executor
-
-	// encoderFunc used to get a new encoder in log entry
-	// Notes: change the encoderFunc will cause the fields empty and rebuild
-	encoderFunc EncoderFunc
 
 	// errorOutput is the error output writer of this logger
 	// logger will write error message into this while failed to log message
@@ -40,9 +41,9 @@ func NewDefault() *Logger {
 		level:       DebugLevel,
 		timeLayout:  defaultTimeLayout,
 		caller:      false,
+		encoderFunc: TextEncoder,
 		fields:      nil,
 		executor:    DefaultExecutor,
-		encoderFunc: TextEncoder,
 		errorOutput: os.Stderr,
 	}
 	l.fields = l.encoderFunc()
@@ -67,18 +68,6 @@ func (l *Logger) WithCaller(ok bool) *Logger {
 	return l
 }
 
-// WithFields for add fixed fields into the log entry
-func (l *Logger) WithFields() Encoder {
-	return l.fields
-}
-
-// ResetFields for clear the data in fields
-func (l *Logger) ResetFields() Encoder {
-	_ = l.fields.Close()
-	l.fields = l.encoderFunc()
-	return l.fields
-}
-
 // WithExecutor will set logger's executor.
 func (l *Logger) WithExecutor(executor Executor) *Logger {
 	l.executor = executor
@@ -101,6 +90,18 @@ func (l *Logger) WithErrorOutput(w io.Writer) *Logger {
 	return l
 }
 
+// WithFields for add fixed fields into the log entry
+func (l *Logger) WithFields() Encoder {
+	return l.fields
+}
+
+// ResetFields for clear the data in fields
+func (l *Logger) ResetFields() Encoder {
+	_ = l.fields.Close()
+	l.fields = l.encoderFunc()
+	return l.fields
+}
+
 // Clone will copy and return a new logger
 func (l *Logger) Clone() *Logger {
 	nl := &Logger{
@@ -114,7 +115,7 @@ func (l *Logger) Clone() *Logger {
 	}
 	err := nl.fields.WriteIn(l.fields.Bytes())
 	if err != nil {
-		_, _ = fmt.Fprintf(nl.errorOutput, "Write filed fail on logger clone: %v\n", err)
+		_, _ = fmt.Fprintf(l.errorOutput, "%s [inner] write fields fail when clone: %v\n", time.Now().Format(l.timeLayout), err)
 	}
 	return nl
 }

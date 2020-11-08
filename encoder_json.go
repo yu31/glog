@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	jp = buffer.NewPool()
+	_jsonBufferPool = buffer.NewPool()
 )
 
 // JSONEncoder return a new Encoder implements by jsonEncoder
@@ -19,7 +19,7 @@ func JSONEncoder() Encoder { return newJSONEncoder() }
 
 func newJSONEncoder() *jsonEncoder {
 	enc := &jsonEncoder{
-		buf: jp.Get(),
+		buf: _jsonBufferPool.Get(),
 	}
 	return enc
 }

@@ -14,7 +14,8 @@ func BenchmarkNewDefault(b *testing.B) {
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_ = NewDefault()
+			l := NewDefault()
+			_ = l.Close()
 		}
 	})
 }
@@ -24,7 +25,8 @@ func BenchmarkLogger_Clone(b *testing.B) {
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_ = l.Clone()
+			nl := l.Clone()
+			_ = nl.Close()
 		}
 	})
 }
