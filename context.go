@@ -5,7 +5,9 @@ import (
 )
 
 // ctxLogKey is used as key to store logger in context
-var ctxLogKey struct{}
+const (
+	ctxLogKey = "glog"
+)
 
 // WithContext set *Logger into given context and return
 func WithContext(ctx context.Context, l *Logger) context.Context {
