@@ -28,7 +28,11 @@ func TestWithContext(t *testing.T) {
 }
 
 func TestFromContext(t *testing.T) {
-	// get a default logger
 	l := FromContext(context.Background())
+	require.Nil(t, l)
+}
+
+func TestFromContextDefault(t *testing.T) {
+	l := FromContextDefault(context.Background())
 	require.NotNil(t, l)
 }
