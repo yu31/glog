@@ -10,7 +10,7 @@ help:
 	@echo "  lint    to run the staticcheck"
 	@echo "  check   to format, vet, lint"
 	@echo "  test    to run test case"
-	@echo "  test    to run benchmark test case"
+	@echo "  bench   to run benchmark test case"
 	@exit 0
 
 
