@@ -13,16 +13,6 @@ help:
 	@echo "  bench   to run benchmark test case"
 	@exit 0
 
-
-.PHONY: test
-test:
-	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -race -v . -test.count=1 -failfast
-
-.PHONY: bench
-bench:
-	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -test.bench="." -test.run="Benchmark" -benchmem -count=1
-
-
 .PHONY: format
 format:
 	@[[ ${VERBOSE} = "yes" ]] && set -x; go fmt ./...;
@@ -36,8 +26,21 @@ lint:
 	@[[ ${VERBOSE} = "yes" ]] && set -x; staticcheck ./...;
 
 
+.PHONY: tidy
+tidy:
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go mod tidy;
+
 .PHONY: check
-check: format vet lint
+check: tidy format vet lint
+
+.PHONY: test
+test:
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -race -v . -test.count=1 -failfast
+
+.PHONY: bench
+bench:
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -test.bench="." -test.run="Benchmark" -benchmem -count=1
+
 
 .DEFAULT_GOAL = help
 

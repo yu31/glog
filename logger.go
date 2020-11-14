@@ -104,7 +104,7 @@ func (l *Logger) ResetFields() Encoder {
 
 // Clone will copy and return a new logger
 func (l *Logger) Clone() *Logger {
-	nl := &Logger{
+	lc := &Logger{
 		level:       l.level,
 		timeLayout:  l.timeLayout,
 		caller:      l.caller,
@@ -113,11 +113,11 @@ func (l *Logger) Clone() *Logger {
 		fields:      l.encoderFunc(),
 		errorOutput: l.errorOutput,
 	}
-	err := nl.fields.WriteIn(l.fields.Bytes())
+	err := lc.fields.WriteIn(l.fields.Bytes())
 	if err != nil {
 		_, _ = fmt.Fprintf(l.errorOutput, "%s [inner] write fields fail when clone: %v\n", time.Now().Format(l.timeLayout), err)
 	}
-	return nl
+	return lc
 }
 
 // Close close the logger for releasing resources

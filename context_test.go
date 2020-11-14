@@ -12,12 +12,14 @@ func TestWithContext(t *testing.T) {
 	l := NewDefault()
 	ctx := WithContext(context.Background(), l)
 	nl := FromContext(ctx)
+	require.NotNil(t, nl)
 	require.True(t, reflect.DeepEqual(l, nl))
 
 	// update logger
 	l = l.WithLevel(InfoLevel)
 	ctx = WithContext(ctx, l)
 	nl = FromContext(ctx)
+	require.NotNil(t, nl)
 	require.True(t, reflect.DeepEqual(l, nl))
 
 	// new logger
