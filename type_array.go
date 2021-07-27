@@ -157,7 +157,12 @@ type errorArray []error
 
 func (vv errorArray) MarshalGLogArray(ae ArrayEncoder) error {
 	for i := range vv {
-		ae.AppendString(vv[i].Error())
+		err := vv[i]
+		if err != nil {
+			ae.AppendString(err.Error())
+		} else {
+			ae.AppendString("<nil>")
+		}
 	}
 	return nil
 }

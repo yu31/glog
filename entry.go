@@ -444,7 +444,11 @@ func (e *Entry) Error(k string, err error) *Entry {
 	if e == nil {
 		return nil
 	}
-	e.Encoder.AddString(k, err.Error())
+	if err != nil {
+		e.Encoder.AddString(k, err.Error())
+	} else {
+		e.Encoder.AddString(k, "<nil>")
+	}
 	return e
 }
 

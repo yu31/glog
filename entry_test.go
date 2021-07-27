@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -241,4 +242,29 @@ func TestEntry_Raw_WithJSON(t *testing.T) {
 	require.True(t, ok)
 	_, ok = k3.(map[string]interface{})
 	require.True(t, ok)
+}
+
+func TestEntry_Error(t *testing.T) {
+	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
+	var err error
+
+	require.NotPanics(t, func() {
+		l.Error().Error("error", err).Fire()
+	})
+}
+
+func TestEntry_Errors(t *testing.T) {
+	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
+	var errors []error
+
+	require.NotPanics(t, func() {
+		l.Error().Errors("error", errors).Fire()
+	})
+
+	errors = append(errors, nil)
+
+	require.NotPanics(t, func() {
+		l.Error().Errors("error", errors).Fire()
+	})
+
 }
