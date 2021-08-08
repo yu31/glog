@@ -9,11 +9,11 @@ import (
 	"github.com/DataWorkbench/glog/pkg/buffer"
 )
 
-var (
-	_textBufferPool = buffer.NewPool()
-)
+var _ Encoder = (*textEncoder)(nil)
 
-// TextEncoder return a new Encoder implements by textEncoder.
+var _textBufferPool = buffer.NewPool()
+
+// TextEncoder return a new encoder implements by textEncoder.
 func TextEncoder() Encoder { return newTextEncoder() }
 
 func newTextEncoder() *textEncoder {
@@ -27,7 +27,7 @@ type textEncoder struct {
 	buf *buffer.Buffer
 }
 
-// Implements Encoder
+// Implements encoder
 func (enc *textEncoder) Bytes() []byte {
 	return enc.buf.Bytes()
 }

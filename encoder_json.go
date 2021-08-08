@@ -10,11 +10,11 @@ import (
 	"github.com/DataWorkbench/glog/pkg/buffer"
 )
 
-var (
-	_jsonBufferPool = buffer.NewPool()
-)
+var _ Encoder = (*jsonEncoder)(nil)
 
-// JSONEncoder return a new Encoder implements by jsonEncoder.
+var _jsonBufferPool = buffer.NewPool()
+
+// JSONEncoder return a new encoder implements by jsonEncoder.
 func JSONEncoder() Encoder { return newJSONEncoder() }
 
 func newJSONEncoder() *jsonEncoder {
@@ -28,7 +28,7 @@ type jsonEncoder struct {
 	buf *buffer.Buffer
 }
 
-// Implements Encoder.
+// Implements encoder.
 func (enc *jsonEncoder) Bytes() []byte {
 	return enc.buf.Bytes()
 }
