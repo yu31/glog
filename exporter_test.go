@@ -7,13 +7,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMultipleExecutor(t *testing.T) {
+func TestMultipleExporter(t *testing.T) {
 	var b1, b2 bytes.Buffer
 
-	e1 := MatchExecutor(&b1, MatchGELevel(DebugLevel))
-	e2 := MatchExecutor(&b2, MatchGELevel(ErrorLevel))
+	e1 := MatchExporter(&b1, MatchGELevel(DebugLevel))
+	e2 := MatchExporter(&b2, MatchGELevel(ErrorLevel))
 
-	l := NewDefault().WithExecutor(MultipleExecutor(e1, e2))
+	l := NewDefault().WithExporter(MultipleExporter(e1, e2))
 
 	l.Debug().Msg("DebugMessage").Fire()
 	l.Info().Msg("InfoMessage").Fire()

@@ -19,7 +19,7 @@ func TestLoggerNewDefault(t *testing.T) {
 	require.Equal(t, l.level, DebugLevel)
 	require.Equal(t, l.timeLayout, defaultTimeLayout)
 	require.False(t, l.caller)
-	require.True(t, reflect.DeepEqual(l.executor, DefaultExecutor))
+	require.True(t, reflect.DeepEqual(l.exporter, DefaultExporter))
 	require.True(t, reflect.DeepEqual(l.encoderFunc(), TextEncoder()))
 	require.True(t, reflect.DeepEqual(l.fields, TextEncoder()))
 	require.True(t, reflect.DeepEqual(l.errorOutput, os.Stderr))
@@ -28,7 +28,7 @@ func TestLoggerNewDefault(t *testing.T) {
 func TestLogger_WithLevel(t *testing.T) {
 	var b bytes.Buffer
 	l := NewDefault()
-	l.WithExecutor(MatchExecutor(&b, nil))
+	l.WithExporter(MatchExporter(&b, nil))
 	l.WithLevel(InfoLevel)
 
 	l.Debug().Msg("HelloWorld").Fire()
@@ -38,7 +38,7 @@ func TestLogger_WithLevel(t *testing.T) {
 
 func TestLogger_WithCaller(t *testing.T) {
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithCaller(true)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithCaller(true)
 	l.WithFields().AddString("k1", "v1")
 	l.WithFields().AddString("k2", "v2")
 
@@ -53,7 +53,7 @@ func TestLogger_WithCaller(t *testing.T) {
 
 func TestLogger_WithFields(t *testing.T) {
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExporter(MatchExporter(&b, nil))
 
 	l.WithFields().AddString("req-k1", "req-v1")
 	l.WithFields().AddString("dup-key", "dup-v1")
@@ -74,7 +74,7 @@ func TestLogger_WithFields(t *testing.T) {
 func TestLogger_Clone(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithErrorOutput(&eb)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithErrorOutput(&eb)
 	l.WithFields().AddString("filed-k1", "filed-v1")
 
 	nl := l.Clone()
@@ -82,7 +82,7 @@ func TestLogger_Clone(t *testing.T) {
 	require.Equal(t, l.level, nl.level)
 	require.Equal(t, l.timeLayout, nl.timeLayout)
 	require.Equal(t, l.caller, nl.caller)
-	require.Equal(t, reflect.ValueOf(l.executor).Pointer(), reflect.ValueOf(nl.executor).Pointer())
+	require.Equal(t, reflect.ValueOf(l.exporter).Pointer(), reflect.ValueOf(nl.exporter).Pointer())
 	require.Equal(t, reflect.ValueOf(l.encoderFunc).Pointer(), reflect.ValueOf(nl.encoderFunc).Pointer())
 	require.Equal(t, reflect.ValueOf(l.errorOutput).Pointer(), reflect.ValueOf(nl.errorOutput).Pointer())
 	require.NotEqual(t, reflect.ValueOf(l.fields).Pointer(), reflect.ValueOf(nl.fields).Pointer())
@@ -163,7 +163,7 @@ func TestLoggerWithTextEncoder(t *testing.T) {
 func TestLoggerWithJSONEncoder(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExecutor(MatchExecutor(&b, nil)).
+	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExporter(MatchExporter(&b, nil)).
 		WithCaller(true).WithErrorOutput(&eb)
 
 	l.Info().

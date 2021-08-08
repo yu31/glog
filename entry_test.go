@@ -17,7 +17,7 @@ import (
 func TestEntry_Byte_WithText(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithErrorOutput(&eb)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithErrorOutput(&eb)
 
 	l.Info().Byte("key", '=').Fire()
 
@@ -47,7 +47,7 @@ func TestEntry_Byte_WithText(t *testing.T) {
 func TestEntry_Byte_WithJSON(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder).WithErrorOutput(&eb)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithEncoderFunc(JSONEncoder).WithErrorOutput(&eb)
 
 	l.Info().Byte("key", '=').Fire()
 
@@ -68,7 +68,7 @@ func TestEntry_Byte_WithJSON(t *testing.T) {
 func TestEntry_Duration_WithText(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithErrorOutput(&eb)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithErrorOutput(&eb)
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	d := time.Second + time.Duration(r.Int63n(int64(time.Second)))
@@ -128,7 +128,7 @@ func TestEntry_Duration_WithText(t *testing.T) {
 func TestEntry_Duration_WithJSON(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder).WithErrorOutput(&eb)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithEncoderFunc(JSONEncoder).WithErrorOutput(&eb)
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	d := time.Second + time.Duration(r.Int63n(int64(time.Second)))
@@ -180,7 +180,7 @@ func TestEntry_Duration_WithJSON(t *testing.T) {
 
 func TestEntry_Raw_WithText(t *testing.T) {
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil))
+	l := NewDefault().WithExporter(MatchExporter(&b, nil))
 
 	data := struct {
 		Name   string
@@ -202,7 +202,7 @@ func TestEntry_Raw_WithText(t *testing.T) {
 
 func TestEntry_Raw_WithJSON(t *testing.T) {
 	var b bytes.Buffer
-	l := NewDefault().WithExecutor(MatchExecutor(&b, nil)).WithEncoderFunc(JSONEncoder)
+	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithEncoderFunc(JSONEncoder)
 
 	data := struct {
 		Name   string
@@ -245,7 +245,7 @@ func TestEntry_Raw_WithJSON(t *testing.T) {
 }
 
 func TestEntry_Error(t *testing.T) {
-	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
 	var err error
 
 	require.NotPanics(t, func() {
@@ -254,7 +254,7 @@ func TestEntry_Error(t *testing.T) {
 }
 
 func TestEntry_Errors(t *testing.T) {
-	l := NewDefault().WithExecutor(MatchExecutor(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
 	var errors []error
 
 	require.NotPanics(t, func() {

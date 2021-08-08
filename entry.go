@@ -56,7 +56,7 @@ func (e *Entry) free() {
 	e.l = nil
 }
 
-// Fire sends the *Entry to Logger's executor.
+// Fire sends the *Entry to Logger's exporter.
 //
 // NOTICE: once this method is called, the *Entry should be disposed.
 // Calling Fire twice can have unexpected result.
@@ -68,7 +68,7 @@ func (e *Entry) Fire() {
 
 	// NOTICE: once the `Execute` returns, the *Entry should be disposed,
 	// if not can have unexpected result.
-	e.withError(e.l.executor.Execute(e))
+	e.withError(e.l.exporter.Execute(e))
 
 	// Release resources
 	e.free()

@@ -26,8 +26,8 @@ type Logger struct {
 	// fields add fixed field into every log entry
 	fields Encoder
 
-	// executor used by every entry
-	executor Executor
+	// exporter used to export the log by every entry.Fire
+	exporter Exporter
 
 	// errorOutput is the error output writer of this logger
 	// logger will write error message into this while failed to log message
@@ -43,7 +43,7 @@ func NewDefault() *Logger {
 		caller:      false,
 		encoderFunc: TextEncoder,
 		fields:      nil,
-		executor:    DefaultExecutor,
+		exporter:    DefaultExporter,
 		errorOutput: os.Stderr,
 	}
 	l.fields = l.encoderFunc()
@@ -68,9 +68,9 @@ func (l *Logger) WithCaller(ok bool) *Logger {
 	return l
 }
 
-// WithExecutor will set logger's executor.
-func (l *Logger) WithExecutor(executor Executor) *Logger {
-	l.executor = executor
+// WithExporter will set logger's exporter.
+func (l *Logger) WithExporter(exporter Exporter) *Logger {
+	l.exporter = exporter
 	return l
 }
 
@@ -108,7 +108,7 @@ func (l *Logger) Clone() *Logger {
 		level:       l.level,
 		timeLayout:  l.timeLayout,
 		caller:      l.caller,
-		executor:    l.executor,
+		exporter:    l.exporter,
 		encoderFunc: l.encoderFunc,
 		fields:      l.encoderFunc(),
 		errorOutput: l.errorOutput,
@@ -131,7 +131,7 @@ func (l *Logger) Close() error {
 		errs = append(errs, err)
 	}
 
-	l.executor = nil
+	l.exporter = nil
 	l.encoderFunc = nil
 	l.fields = nil
 	l.errorOutput = nil

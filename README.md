@@ -12,7 +12,7 @@ The glog package provides a fast and simple logger dedicated to TEXT/JSON output
 * `context.Context` integration
 * JSON and TEXT encoding formats
 * User-define Encoder
-* User-define Executor
+* User-define Exporter
 
 ## Installation
 
@@ -142,15 +142,15 @@ import (
 
 func main() {
 	logfile := "/tmp/testglog.log"
-	executor, err := glog.FileExecutor(logfile, nil)
+	exporter, err := glog.FileExporter(logfile, nil)
 	if err != nil {
 		fmt.Println("open file error:", err)
 		return
 	}
-	defer executor.Close()
+	defer exporter.Close()
 
 	l := glog.NewDefault()
-	l.WithExecutor(executor)
+	l.WithExporter(exporter)
 
 	l.Debug().Msg("Hello logfile").Fire()
 
@@ -259,20 +259,20 @@ func main() {
 	logFile := "/tmp/testglog.log"
 	errLogFile := "/tmp/testglog.log.wf"
 
-	e1, err := glog.FileExecutor(logFile, glog.MatchGELevel(glog.DebugLevel))
+	e1, err := glog.FileExporter(logFile, glog.MatchGELevel(glog.DebugLevel))
 	if err != nil {
 		fmt.Println("open log file fail:", err)
 		return
 	}
 
-	e2, err := glog.FileExecutor(errLogFile, glog.MatchGELevel(glog.ErrorLevel))
+	e2, err := glog.FileExporter(errLogFile, glog.MatchGELevel(glog.ErrorLevel))
 	if err != nil {
 		fmt.Println("open error log file fail:", err)
 		return
 	}
 
 	l := glog.NewDefault()
-	l.WithExecutor(glog.MultipleExecutor(e1, e2))
+	l.WithExporter(glog.MultipleExporter(e1, e2))
 
 	l.Debug().Msg("DebugMessage").Fire()
 	l.Info().Msg("InfoMessage").Fire()

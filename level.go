@@ -16,8 +16,6 @@ const (
 	ErrorLevel
 	// FatalLevel defines fatal log level.
 	FatalLevel
-	//// PanicLevel defines panic log level.
-	//PanicLevel
 )
 
 func (l Level) String() string {
@@ -32,8 +30,6 @@ func (l Level) String() string {
 		return "error"
 	case FatalLevel:
 		return "fatal"
-	//case PanicLevel:
-	//	return "panic"
 	default:
 		return ""
 	}
