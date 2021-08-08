@@ -66,9 +66,9 @@ func (e *Entry) Fire() {
 	}
 	e.encodeEnds()
 
-	// NOTICE: once the `Execute` returns, the *Entry should be disposed,
+	// NOTICE: once the `Export` returns, the *Entry should be disposed,
 	// if not can have unexpected result.
-	e.withError(e.l.exporter.Execute(e))
+	e.withError(e.l.exporter.Export(e))
 
 	// Release resources
 	e.free()

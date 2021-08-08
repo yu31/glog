@@ -134,6 +134,7 @@ func TestEntry_Duration_WithJSON(t *testing.T) {
 	d := time.Second + time.Duration(r.Int63n(int64(time.Second)))
 
 	l.Info().
+		Msg("Test for JSON format").
 		Nanosecond("Nanosecond", d).
 		Microsecond("Microsecond", d).
 		Millisecond("Millisecond", d).

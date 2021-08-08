@@ -1,6 +1,6 @@
 package glog
 
-// Filter used to control the behavior in glog
+// Filter used to control the export behavior in Exporter.
 type Filter interface {
 	Match(level Level) bool
 }

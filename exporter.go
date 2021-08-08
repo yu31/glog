@@ -7,12 +7,17 @@ import (
 )
 
 var (
+	_ Exporter = (*matcherExporter)(nil)
+	_ Exporter = (*multipleExporter)(nil)
+)
+
+var (
 	DefaultExporter = MatchExporter(os.Stdout, nil)
 )
 
 // Exporter used to handle the Entry
 type Exporter interface {
-	Execute(entry *Entry) error
+	Export(entry *Entry) error
 	Close() error
 }
 
@@ -29,7 +34,7 @@ type matcherExporter struct {
 	f Filter
 }
 
-func (exp *matcherExporter) Execute(entry *Entry) error {
+func (exp *matcherExporter) Export(entry *Entry) error {
 	if exp.f != nil && !exp.f.Match(entry.Level) {
 		return nil
 	}
@@ -54,10 +59,10 @@ type multipleExporter struct {
 	exporters []Exporter
 }
 
-func (exp *multipleExporter) Execute(entry *Entry) error {
+func (exp *multipleExporter) Export(entry *Entry) error {
 	var errs []error
 	for i := range exp.exporters {
-		err := exp.exporters[i].Execute(entry)
+		err := exp.exporters[i].Export(entry)
 		if err != nil {
 			errs = append(errs, err)
 		}
