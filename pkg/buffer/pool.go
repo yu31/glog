@@ -3,7 +3,7 @@ package buffer
 import "sync"
 
 const (
-	size = 512 // by default, create 256 bits buffers
+	size = 256 // by default, create 256 bits buffers
 	//maxSize = 1 << 16 // 64KiB
 	maxSize = 1 << 15 // 32KiB
 )

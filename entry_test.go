@@ -24,8 +24,8 @@ func TestEntry_newEntry(t *testing.T) {
 	entry := newEntry(l, DebugLevel)
 	require.NotNil(t, entry)
 	require.Equal(t, l, entry.l)
-	require.Equal(t, ctx, entry.Context)
-	require.Equal(t, DebugLevel, entry.Level)
+	require.NotNil(t, entry.encoder)
+	require.Equal(t, DebugLevel, entry.level)
 }
 
 func TestEntry_Byte_WithText(t *testing.T) {

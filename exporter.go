@@ -1,9 +1,14 @@
 package glog
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
+)
+
+var (
+	DefaultExporter = MatchExporter(os.Stdout, nil)
 )
 
 var (
@@ -11,13 +16,44 @@ var (
 	_ Exporter = (*multipleExporter)(nil)
 )
 
-var (
-	DefaultExporter = MatchExporter(os.Stdout, nil)
-)
+// Record represents the Entry's content.
+type Record struct {
+	ctx   context.Context
+	level Level
+	data  []byte
+}
+
+// Context returns context where in Logger.
+func (r *Record) Context() context.Context {
+	return r.ctx
+}
+
+// Level returns the log level of the entry.
+func (r *Record) Level() Level {
+	return r.level
+}
+
+// Bytes returns the Entry's content.
+func (r *Record) Bytes() []byte {
+	return r.data
+}
+
+// Copy returns an copy of Entry's content.
+func (r *Record) Copy() []byte {
+	bs := make([]byte, len(r.data))
+	copy(bs, r.data)
+	return bs
+}
 
 // Exporter used to handle the Entry.
 type Exporter interface {
-	Export(entry *Entry) error
+	// NOTICE: The `data` will be reuse by put back to sync.Pool.
+	//
+	// Thus the `data` should be disposed after the `Export` returns.
+	// If the `data` is processed asynchronously, you should get data with Copy method.
+	Export(record *Record) error
+
+	// Close to close the exporter.
 	Close() error
 }
 
@@ -34,11 +70,11 @@ type matcherExporter struct {
 	f Filter
 }
 
-func (exp *matcherExporter) Export(entry *Entry) error {
-	if exp.f != nil && !exp.f.Match(entry.Level) {
+func (exp *matcherExporter) Export(record *Record) error {
+	if exp.f != nil && !exp.f.Match(record.Level()) {
 		return nil
 	}
-	_, err := exp.w.Write(entry.Encoder.Bytes())
+	_, err := exp.w.Write(record.Bytes())
 	return err
 }
 
@@ -59,10 +95,10 @@ type multipleExporter struct {
 	exporters []Exporter
 }
 
-func (exp *multipleExporter) Export(entry *Entry) error {
+func (exp *multipleExporter) Export(record *Record) error {
 	var errs []error
 	for i := range exp.exporters {
-		err := exp.exporters[i].Export(entry)
+		err := exp.exporters[i].Export(record)
 		if err != nil {
 			errs = append(errs, err)
 		}

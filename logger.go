@@ -131,7 +131,7 @@ func (l *Logger) Clone() *Logger {
 	}
 	err := nl.fields.WriteIn(l.fields.Bytes())
 	if err != nil {
-		_, _ = fmt.Fprintf(l.errorOutput, "[glog library]: %s write fields fail when clone: %v\n", time.Now().Format(l.timeLayout), err)
+		_, _ = fmt.Fprintf(l.errorOutput, "[glog]: %s write fields fail when clone: %v\n", time.Now().Format(l.timeLayout), err)
 	}
 	return nl
 }
@@ -148,9 +148,10 @@ func (l *Logger) Close() error {
 	}
 
 	l.ctx = nil
-	l.exporter = nil
+	l.timeLayout = ""
 	l.encoderFunc = nil
 	l.fields = nil
+	l.exporter = nil
 	l.errorOutput = nil
 
 	if len(errs) == 0 {

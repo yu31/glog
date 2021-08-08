@@ -83,14 +83,14 @@ func TestLogger_WithFields(t *testing.T) {
 
 func TestLogger_Clone(t *testing.T) {
 	type ctxKey struct{}
-	ctx := context.WithValue(context.Background(), ctxKey{}, "v1")
+	ctx1 := context.WithValue(context.Background(), ctxKey{}, "v1")
 
 	var eb bytes.Buffer
 	var b bytes.Buffer
 	l := NewDefault().
 		WithExporter(MatchExporter(&b, nil)).
 		WithErrorOutput(&eb).
-		WithContext(ctx)
+		WithContext(ctx1)
 
 	l.WithFields().AddString("filed-k1", "filed-v1")
 
@@ -104,6 +104,16 @@ func TestLogger_Clone(t *testing.T) {
 	require.Equal(t, reflect.ValueOf(l.errorOutput).Pointer(), reflect.ValueOf(nl.errorOutput).Pointer())
 	require.NotEqual(t, reflect.ValueOf(l.fields).Pointer(), reflect.ValueOf(nl.fields).Pointer())
 	require.Equal(t, l.fields.Bytes(), nl.fields.Bytes())
+
+	// Reset the context in new logger.
+	ctx2 := context.WithValue(context.Background(), ctxKey{}, "v2")
+	nl.WithContext(ctx2)
+	require.Equal(t, l.ctx, ctx1)
+	require.True(t, reflect.DeepEqual(l.ctx, ctx1))
+	require.Equal(t, nl.ctx, ctx2)
+	require.True(t, reflect.DeepEqual(nl.ctx, ctx2))
+	require.NotEqual(t, l.ctx, nl.ctx)
+	require.False(t, reflect.DeepEqual(l.ctx, nl.ctx))
 
 	nl.WithFields().AddString("filed-k2", "filed-v2")
 	b.Reset()
