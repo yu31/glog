@@ -2,10 +2,10 @@ package glog
 
 import "time"
 
-// EncoderFunc used to return a new Encoder instances
+// EncoderFunc used to return a new Encoder instances.
 type EncoderFunc func() Encoder
 
-// FieldEncoder used to add single elements
+// FieldEncoder used to add single elements.
 type FieldEncoder interface {
 	// AppendByte the value to an integer format.
 	AppendByte(b byte)
@@ -32,12 +32,12 @@ type FieldEncoder interface {
 	AppendInterface(i interface{}) error
 }
 
-// ArrayEncoder used to add array-type field
+// ArrayEncoder used to add array-type field.
 type ArrayEncoder interface {
 	FieldEncoder
 }
 
-// ObjectEncoder used to add an k/v field
+// ObjectEncoder used to add an k/v field.
 type ObjectEncoder interface {
 	// AddByte the value to an integer format.
 	AddByte(k string, b byte)
@@ -64,21 +64,21 @@ type ObjectEncoder interface {
 	AddInterface(k string, i interface{}) error
 }
 
-// BuildEncoder used to add some specific fields
+// BuildEncoder used to add some specific fields.
 type BuildEncoder interface {
 	AddMsg(msg string)
 	AddEntryTime(t time.Time, layout string)
 	AddLevel(level Level)
 	AddCaller(skip int)
 
-	// AddBeginMarker add the begin marker
+	// AddBeginMarker add the begin marker.
 	AddBeginMarker()
-	// AppendEndMarker add the end marker
+	// AppendEndMarker add the end marker.
 	AddEndMarker()
-	// AppendLineBreak add the line break
+	// AppendLineBreak add the line break.
 	AddLineBreak()
 
-	// WriteIn used to write encoded data
+	// WriteIn used to write encoded data.
 	WriteIn(p []byte) error
 }
 

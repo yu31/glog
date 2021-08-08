@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Logger define the logger.
+// Logger declares the logger.
 type Logger struct {
 	// level set the minimum accepted level,
 	// less than the level will be ignored;
@@ -16,11 +16,11 @@ type Logger struct {
 	// timeLayout set the time format in log message.
 	timeLayout string
 
-	// caller set whether adds caller info in log message
+	// caller set whether adds caller info in log message.
 	caller bool
 
-	// encoderFunc used to get a new encoder in log entry
-	// Notes: change the encoderFunc will cause the fields empty and rebuild
+	// encoderFunc used to get a new encoder in log entry.
+	// Notes: change the encoderFunc will cause the fields empty and rebuild.
 	encoderFunc EncoderFunc
 
 	// fields add fixed field into every log entry
@@ -50,31 +50,31 @@ func NewDefault() *Logger {
 	return l
 }
 
-// WithLevel will set logger's level.
+// WithLevel will reset logger's level.
 func (l *Logger) WithLevel(level Level) *Logger {
 	l.level = level
 	return l
 }
 
-// WithTimeLayout will set logger's timeLayout.
+// WithTimeLayout will reset logger's timeLayout.
 func (l *Logger) WithTimeLayout(layout string) *Logger {
 	l.timeLayout = layout
 	return l
 }
 
-// WithCaller will set logger's caller.
+// WithCaller will reset logger's caller.
 func (l *Logger) WithCaller(ok bool) *Logger {
 	l.caller = ok
 	return l
 }
 
-// WithExporter will set logger's exporter.
+// WithExporter will reset logger's exporter.
 func (l *Logger) WithExporter(exporter Exporter) *Logger {
 	l.exporter = exporter
 	return l
 }
 
-// WithEncoderFunc will set logger's encoderFunc.
+// WithEncoderFunc reset set logger's encoderFunc.
 func (l *Logger) WithEncoderFunc(f EncoderFunc) *Logger {
 	l.encoderFunc = f
 	if l.fields != nil {
@@ -84,25 +84,25 @@ func (l *Logger) WithEncoderFunc(f EncoderFunc) *Logger {
 	return l
 }
 
-// WithErrorOutput will set logger's exporter.
+// WithErrorOutput reset set logger's exporter.
 func (l *Logger) WithErrorOutput(w io.Writer) *Logger {
 	l.errorOutput = w
 	return l
 }
 
-// WithFields for add fixed fields into the log entry
+// WithFields for add fixed fields into the log entry.
 func (l *Logger) WithFields() Encoder {
 	return l.fields
 }
 
-// ResetFields for clear the data in fields
+// ResetFields for clear the data in fields.
 func (l *Logger) ResetFields() Encoder {
 	_ = l.fields.Close()
 	l.fields = l.encoderFunc()
 	return l.fields
 }
 
-// Clone will copy and return a new logger
+// Clone do copy and returns a new logger.
 func (l *Logger) Clone() *Logger {
 	lc := &Logger{
 		level:       l.level,
@@ -120,10 +120,10 @@ func (l *Logger) Clone() *Logger {
 	return lc
 }
 
-// Close close the logger for releasing resources
+// Close close the logger for releasing resources.
 //
 // Notes: Close don't close the Exporter because it may be
-// shared by multiple Logger instances
+// shared by multiple Logger instances.
 func (l *Logger) Close() error {
 	var errs []error
 
@@ -149,27 +149,27 @@ func (l *Logger) newEntry(level Level) *Entry {
 	return nil
 }
 
-// Debug will return an Entry with DebugLevel.
+// Debug returns an Entry with DebugLevel.
 func (l *Logger) Debug() *Entry {
 	return l.newEntry(DebugLevel)
 }
 
-// Debug will return an Entry with InfoLevel.
+// Debug returns an Entry with InfoLevel.
 func (l *Logger) Info() *Entry {
 	return l.newEntry(InfoLevel)
 }
 
-// Debug will return an Entry with WarnLevel.
+// Debug returns an Entry with WarnLevel.
 func (l *Logger) Warn() *Entry {
 	return l.newEntry(WarnLevel)
 }
 
-// Debug will return an Entry with ErrorLevel.
+// Debug returns an Entry with ErrorLevel.
 func (l *Logger) Error() *Entry {
 	return l.newEntry(ErrorLevel)
 }
 
-// Debug will return an Entry with FatalLevel.
+// Debug returns an Entry with FatalLevel.
 func (l *Logger) Fatal() *Entry {
 	return l.newEntry(FatalLevel)
 }

@@ -4,12 +4,12 @@ import (
 	"context"
 )
 
-// ctxLogKey is used as key to store *Logger in context
+// ctxLogKey is used as key to store *Logger in context.
 type ctxLogKey struct{}
 
 // WithContext set *Logger into context and returned with given ctx.
 func WithContext(ctx context.Context, l *Logger) context.Context {
-	// If nil logger was given, return ctx directly
+	// If nil logger was given, return ctx directly.
 	if l == nil {
 		return ctx
 	}

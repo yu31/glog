@@ -14,7 +14,7 @@ var (
 	_jsonBufferPool = buffer.NewPool()
 )
 
-// JSONEncoder return a new Encoder implements by jsonEncoder
+// JSONEncoder return a new Encoder implements by jsonEncoder.
 func JSONEncoder() Encoder { return newJSONEncoder() }
 
 func newJSONEncoder() *jsonEncoder {
@@ -28,7 +28,7 @@ type jsonEncoder struct {
 	buf *buffer.Buffer
 }
 
-// Implements Encoder
+// Implements Encoder.
 func (enc *jsonEncoder) Bytes() []byte {
 	return enc.buf.Bytes()
 }
@@ -38,7 +38,7 @@ func (enc *jsonEncoder) Close() error {
 	return nil
 }
 
-// Implements BuildEncoder
+// Implements BuildEncoder.
 func (enc *jsonEncoder) AddBeginMarker() { enc.buf.AppendByte('{') }
 func (enc *jsonEncoder) AddEndMarker()   { enc.buf.AppendByte('}') }
 func (enc *jsonEncoder) AddLineBreak()   { enc.buf.AppendByte('\n') }
@@ -77,7 +77,7 @@ func (enc *jsonEncoder) WriteIn(p []byte) error {
 	return err
 }
 
-// Implements ObjectEncoder
+// Implements ObjectEncoder.
 func (enc *jsonEncoder) AddByte(k string, b byte)       { enc.appendKey(k); enc.appendByteInt(b) }
 func (enc *jsonEncoder) AddString(k string, s string)   { enc.appendKey(k); enc.appendString(s) }
 func (enc *jsonEncoder) AddBool(k string, v bool)       { enc.appendKey(k); enc.appendBool(v) }
@@ -111,7 +111,7 @@ func (enc *jsonEncoder) AddInterface(k string, i interface{}) error {
 	return enc.appendInterface(i)
 }
 
-// Implements FieldEncoder
+// Implements FieldEncoder.
 func (enc *jsonEncoder) AppendByte(b byte)       { enc.appendElementSeparator(); enc.appendByteInt(b) }
 func (enc *jsonEncoder) AppendString(s string)   { enc.appendElementSeparator(); enc.appendString(s) }
 func (enc *jsonEncoder) AppendBool(v bool)       { enc.appendElementSeparator(); enc.appendBool(v) }
@@ -151,19 +151,19 @@ func (enc *jsonEncoder) AppendInterface(i interface{}) error {
 	return enc.appendInterface(i)
 }
 
-// Add k between ElementSeparator and FieldSeparator
+// Add k between ElementSeparator and FieldSeparator.
 func (enc *jsonEncoder) appendKey(key string) {
 	enc.appendElementSeparator()
 	enc.appendString(key)
 	enc.appendFieldSeparator()
 }
 
-// Add field separator
+// Add field separator.
 func (enc *jsonEncoder) appendFieldSeparator() {
 	enc.buf.AppendByte(':')
 }
 
-// Add elements separator
+// Add elements separator.
 func (enc *jsonEncoder) appendElementSeparator() {
 	last := enc.buf.Len() - 1
 	if last < 0 {

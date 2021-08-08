@@ -15,7 +15,7 @@ var (
 	DefaultExporter = MatchExporter(os.Stdout, nil)
 )
 
-// Exporter used to handle the Entry
+// Exporter used to handle the Entry.
 type Exporter interface {
 	Export(entry *Entry) error
 	Close() error
@@ -23,7 +23,7 @@ type Exporter interface {
 
 // MatchExporter return a Exporter implements by matcherExporter;
 // This used to write only the specified level of Entry.
-// The parameters Filter allowed to be nil
+// The parameters Filter allowed to be nil.
 func MatchExporter(w io.Writer, f Filter) Exporter {
 	return &matcherExporter{w: w, f: f}
 }
@@ -42,7 +42,7 @@ func (exp *matcherExporter) Export(entry *Entry) error {
 	return err
 }
 
-// Close for close the Exporter
+// Close for close the Exporter.
 func (exp *matcherExporter) Close() error {
 	if c, ok := exp.w.(io.Closer); ok {
 		return c.Close()
@@ -50,7 +50,7 @@ func (exp *matcherExporter) Close() error {
 	return nil
 }
 
-// MultipleExporter used for apply multiple Exporter to a Entry
+// MultipleExporter used for apply multiple Exporter to a Entry.
 func MultipleExporter(exporters ...Exporter) Exporter {
 	return &multipleExporter{exporters: exporters}
 }
@@ -87,7 +87,7 @@ func (exp *multipleExporter) Close() error {
 	return fmt.Errorf("%v", errs)
 }
 
-// FileExporter is a MatchExporter wrapper that uses a file
+// FileExporter is a MatchExporter wrapper that uses a file.
 func FileExporter(name string, f Filter) (Exporter, error) {
 	w, err := os.OpenFile(name, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {

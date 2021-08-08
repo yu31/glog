@@ -10,7 +10,7 @@ const (
 	defaultTimeLayout = time.RFC3339Nano
 )
 
-// Defines the time format type
+// Defines the time format type.
 const (
 	// TimeFormatUnixSecond defines a time format that makes time fields to be
 	// serialized as Unix timestamp integers in seconds.
@@ -29,7 +29,7 @@ const (
 	TimeFormatUnixNano = "UnixNano"
 )
 
-// Defines the format type for time.Duration
+// Defines the format type for time.Duration.
 const (
 	DurationFormatNano int8 = iota
 	DurationFormatMicro
@@ -48,7 +48,7 @@ const (
 	hourSuffix   = "h"
 )
 
-// AppendDuration encode the time.Duration to a strings by specified layout
+// AppendDuration encode the time.Duration to a strings by specified layout.
 func AppendDuration(buf *buffer.Buffer, d time.Duration, layout int8) {
 	switch layout {
 	case DurationFormatNano:

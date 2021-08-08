@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Entry used to build a log record
+// Entry used to build a log record.
 type Entry struct {
 	Level   Level
 	Encoder Encoder

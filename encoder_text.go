@@ -13,7 +13,7 @@ var (
 	_textBufferPool = buffer.NewPool()
 )
 
-// TextEncoder return a new Encoder implements by textEncoder
+// TextEncoder return a new Encoder implements by textEncoder.
 func TextEncoder() Encoder { return newTextEncoder() }
 
 func newTextEncoder() *textEncoder {
@@ -37,7 +37,7 @@ func (enc *textEncoder) Close() error {
 	return nil
 }
 
-// Implements BuildEncoder
+// Implements BuildEncoder.
 func (enc *textEncoder) AddBeginMarker() {}
 func (enc *textEncoder) AddEndMarker()   {}
 func (enc *textEncoder) AddLineBreak()   { enc.buf.AppendByte('\n') }
@@ -77,7 +77,7 @@ func (enc *textEncoder) WriteIn(p []byte) error {
 	return err
 }
 
-// Implements ObjectEncoder
+// Implements ObjectEncoder.
 func (enc *textEncoder) AddByte(k string, b byte)       { enc.appendKey(k); enc.appendByteInt(b) }
 func (enc *textEncoder) AddString(k string, s string)   { enc.appendKey(k); enc.appendString(s) }
 func (enc *textEncoder) AddBool(k string, v bool)       { enc.appendKey(k); enc.appendBool(v) }
@@ -111,7 +111,7 @@ func (enc *textEncoder) AddInterface(k string, i interface{}) error {
 	return enc.appendInterface(i)
 }
 
-// Implements FieldEncoder
+// Implements FieldEncoder.
 func (enc *textEncoder) AppendByte(v byte)       { enc.appendElementSeparator(); enc.appendByteInt(v) }
 func (enc *textEncoder) AppendString(s string)   { enc.appendElementSeparator(); enc.appendString(s) }
 func (enc *textEncoder) AppendBool(v bool)       { enc.appendElementSeparator(); enc.appendBool(v) }
@@ -151,7 +151,7 @@ func (enc *textEncoder) AppendInterface(i interface{}) error {
 	return enc.appendInterface(i)
 }
 
-// Add k between ElementSeparator and FieldSeparator
+// Add k between ElementSeparator and FieldSeparator.
 func (enc *textEncoder) appendKey(key string) {
 	enc.appendElementSeparator()
 	enc.appendString(key)
@@ -162,7 +162,7 @@ func (enc *textEncoder) appendFieldSeparator() {
 	enc.buf.AppendByte('=')
 }
 
-// Add elements separator
+// Add elements separator.
 func (enc *textEncoder) appendElementSeparator() {
 	last := enc.buf.Len() - 1
 	if last < 0 {

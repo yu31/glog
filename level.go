@@ -1,6 +1,6 @@
 package glog
 
-// Level defines log levels.
+// Level declares log level.
 type Level int8
 
 const (

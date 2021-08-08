@@ -5,7 +5,7 @@ type Filter interface {
 	Match(level Level) bool
 }
 
-// MatchFunc is wrappers for match the specified level
+// MatchFunc is wrappers for match the specified level.
 type MatchFunc func(level Level) bool
 
 func (f MatchFunc) Match(level Level) bool {
