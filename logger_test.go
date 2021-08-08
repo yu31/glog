@@ -2,6 +2,7 @@ package glog
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -16,6 +17,7 @@ import (
 
 func TestLoggerNewDefault(t *testing.T) {
 	l := NewDefault()
+	require.Equal(t, l.ctx, context.Background())
 	require.Equal(t, l.level, DebugLevel)
 	require.Equal(t, l.timeLayout, defaultTimeLayout)
 	require.False(t, l.caller)
@@ -23,6 +25,14 @@ func TestLoggerNewDefault(t *testing.T) {
 	require.True(t, reflect.DeepEqual(l.encoderFunc(), TextEncoder()))
 	require.True(t, reflect.DeepEqual(l.fields, TextEncoder()))
 	require.True(t, reflect.DeepEqual(l.errorOutput, os.Stderr))
+}
+
+func TestLogger_WithContext(t *testing.T) {
+	type ctxKey struct{}
+	ctx := context.WithValue(context.Background(), ctxKey{}, "v1")
+	l := NewDefault().WithContext(ctx)
+	require.Equal(t, l.ctx, ctx)
+	require.True(t, reflect.DeepEqual(l.ctx, ctx))
 }
 
 func TestLogger_WithLevel(t *testing.T) {
@@ -72,13 +82,20 @@ func TestLogger_WithFields(t *testing.T) {
 }
 
 func TestLogger_Clone(t *testing.T) {
+	type ctxKey struct{}
+	ctx := context.WithValue(context.Background(), ctxKey{}, "v1")
+
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithErrorOutput(&eb)
+	l := NewDefault().
+		WithExporter(MatchExporter(&b, nil)).
+		WithErrorOutput(&eb).
+		WithContext(ctx)
+
 	l.WithFields().AddString("filed-k1", "filed-v1")
 
 	nl := l.Clone()
-
+	require.Equal(t, l.ctx, nl.ctx)
 	require.Equal(t, l.level, nl.level)
 	require.Equal(t, l.timeLayout, nl.timeLayout)
 	require.Equal(t, l.caller, nl.caller)

@@ -1,6 +1,7 @@
 package glog
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -9,6 +10,8 @@ import (
 
 // Logger declares the logger.
 type Logger struct {
+	ctx context.Context
+
 	// level set the minimum accepted level,
 	// less than the level will be ignored;
 	level Level
@@ -38,6 +41,7 @@ type Logger struct {
 
 func NewDefault() *Logger {
 	l := &Logger{
+		ctx:         context.Background(),
 		level:       DebugLevel,
 		timeLayout:  defaultTimeLayout,
 		caller:      false,
@@ -47,6 +51,17 @@ func NewDefault() *Logger {
 		errorOutput: os.Stderr,
 	}
 	l.fields = l.encoderFunc()
+	return l
+}
+
+// Context returns the ctx where in the logger.
+func (l *Logger) Context() context.Context {
+	return l.ctx
+}
+
+// WithContext will reset logger's ctx.
+func (l *Logger) WithContext(ctx context.Context) *Logger {
+	l.ctx = ctx
 	return l
 }
 
@@ -104,7 +119,8 @@ func (l *Logger) ResetFields() Encoder {
 
 // Clone do copy and returns a new logger.
 func (l *Logger) Clone() *Logger {
-	lc := &Logger{
+	nl := &Logger{
+		ctx:         l.ctx,
 		level:       l.level,
 		timeLayout:  l.timeLayout,
 		caller:      l.caller,
@@ -113,11 +129,11 @@ func (l *Logger) Clone() *Logger {
 		fields:      l.encoderFunc(),
 		errorOutput: l.errorOutput,
 	}
-	err := lc.fields.WriteIn(l.fields.Bytes())
+	err := nl.fields.WriteIn(l.fields.Bytes())
 	if err != nil {
-		_, _ = fmt.Fprintf(l.errorOutput, "%s [inner] write fields fail when clone: %v\n", time.Now().Format(l.timeLayout), err)
+		_, _ = fmt.Fprintf(l.errorOutput, "[glog library]: %s write fields fail when clone: %v\n", time.Now().Format(l.timeLayout), err)
 	}
-	return lc
+	return nl
 }
 
 // Close close the logger for releasing resources.
@@ -131,6 +147,7 @@ func (l *Logger) Close() error {
 		errs = append(errs, err)
 	}
 
+	l.ctx = nil
 	l.exporter = nil
 	l.encoderFunc = nil
 	l.fields = nil

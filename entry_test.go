@@ -2,6 +2,7 @@ package glog
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +14,19 @@ import (
 
 	"github.com/stretchr/testify/require"
 )
+
+func TestEntry_newEntry(t *testing.T) {
+	type ctxKey struct{}
+	ctx := context.WithValue(context.Background(), ctxKey{}, "v1")
+
+	l := NewDefault().WithContext(ctx)
+
+	entry := newEntry(l, DebugLevel)
+	require.NotNil(t, entry)
+	require.Equal(t, l, entry.l)
+	require.Equal(t, ctx, entry.Context)
+	require.Equal(t, DebugLevel, entry.Level)
+}
 
 func TestEntry_Byte_WithText(t *testing.T) {
 	var eb bytes.Buffer
