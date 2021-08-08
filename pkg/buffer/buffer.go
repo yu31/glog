@@ -3,7 +3,6 @@ package buffer
 import (
 	"strconv"
 	"time"
-	"unsafe"
 )
 
 // Buffer is a thin wrapper around a byte slice. It's intended to be pooled, so
@@ -67,7 +66,7 @@ func (b *Buffer) Bytes() []byte {
 
 // String returns a string copy of the underlying byte slice.
 func (b *Buffer) String() string {
-	return *(*string)(unsafe.Pointer(&b.bs))
+	return string(b.bs)
 }
 
 // Reset resets the underlying byte slice. Subsequent writes re-use the slice's
