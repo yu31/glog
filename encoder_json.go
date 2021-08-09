@@ -73,6 +73,7 @@ func (enc *jsonEncoder) WriteIn(p []byte) error {
 	if len(p) == 0 {
 		return nil
 	}
+	enc.appendElementSeparator()
 	_, err := enc.buf.Write(p)
 	return err
 }

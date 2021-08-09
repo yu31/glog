@@ -1,6 +1,7 @@
 package glog
 
 import (
+	"bytes"
 	"encoding/json"
 	"testing"
 	"time"
@@ -77,4 +78,34 @@ func TestJsonEncoder_AddObject(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, len(m1), 1)
 	require.Equal(t, len(m1["infos"]), len(infos))
+}
+
+func TestJSONEncoder_AddFields(t *testing.T) {
+	var eb bytes.Buffer
+	var b bytes.Buffer
+	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExporter(MatchExporter(&b, nil)).
+		WithCaller(true).WithErrorOutput(&eb)
+
+	l.WithFields().AddString("rid", "xxxxxx01")
+	l.WithFields().AddString("tid", "yyyyyy02")
+	l.WithFields().AddString("xid", "zzzzzz03")
+
+	l.Info().
+		Msg("test logger out").
+		String("String", "Value").
+		Fire()
+
+	require.Greater(t, b.Len(), 0)
+	c := b.Bytes()[:b.Len()-1]
+
+	m := make(map[string]interface{})
+	err := json.Unmarshal(c, &m)
+	require.Nil(t, err, "%q", string(c))
+	require.Equal(t, "xxxxxx01", m["rid"])
+	require.Equal(t, "yyyyyy02", m["tid"])
+	require.Equal(t, "zzzzzz03", m["xid"])
+	require.Equal(t, "Value", m["String"])
+	require.Equal(t, "test logger out", m["message"])
+
+	require.Equal(t, eb.Len(), 0)
 }
