@@ -47,7 +47,7 @@ func (r *Record) Copy() []byte {
 
 // Exporter used to handle the Entry.
 type Exporter interface {
-	// NOTICE: The `data` will be reuse by put back to sync.Pool.
+	// Export NOTICE: The `data` will be reuse by put back to sync.Pool.
 	//
 	// Thus the `data` should be disposed after the `Export` returns.
 	// If the `data` is processed asynchronously, you should get data with Copy method.
