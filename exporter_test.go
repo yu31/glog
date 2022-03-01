@@ -61,8 +61,8 @@ func TestExporter_Custom(t *testing.T) {
 func TestMultipleExporter(t *testing.T) {
 	var b1, b2 bytes.Buffer
 
-	e1 := MatchExporter(&b1, MatchGELevel(DebugLevel))
-	e2 := MatchExporter(&b2, MatchGELevel(ErrorLevel))
+	e1 := FilterExporter(&b1, MatchGTELevel(DebugLevel))
+	e2 := FilterExporter(&b2, MatchGTELevel(ErrorLevel))
 
 	l := NewDefault().WithExporter(MultipleExporter(e1, e2))
 
@@ -82,4 +82,25 @@ func TestMultipleExporter(t *testing.T) {
 	require.NotContains(t, s2, "InfoMessage")
 	require.Contains(t, s2, "ErrorMessage")
 	require.Contains(t, s2, "FatalMessage")
+}
+
+type writerCloser1 struct {
+	isClosed bool
+}
+
+func (exp *writerCloser1) Write(p []byte) (n int, err error) {
+	return
+}
+
+func (exp *writerCloser1) Close() (err error) {
+	exp.isClosed = true
+	return
+}
+
+func TestStandardExporter_Close(t *testing.T) {
+	writer := &writerCloser1{}
+	exporter := StandardExporter(writer)
+	_ = exporter.Close()
+
+	require.True(t, writer.isClosed)
 }

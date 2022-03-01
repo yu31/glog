@@ -38,7 +38,7 @@ func TestLogger_WithContext(t *testing.T) {
 func TestLogger_WithLevel(t *testing.T) {
 	var b bytes.Buffer
 	l := NewDefault()
-	l.WithExporter(MatchExporter(&b, nil))
+	l.WithExporter(StandardExporter(&b))
 	l.WithLevel(InfoLevel)
 
 	l.Debug().Msg("HelloWorld").Fire()
@@ -48,7 +48,7 @@ func TestLogger_WithLevel(t *testing.T) {
 
 func TestLogger_WithCaller(t *testing.T) {
 	var b bytes.Buffer
-	l := NewDefault().WithExporter(MatchExporter(&b, nil)).WithCaller(true)
+	l := NewDefault().WithExporter(StandardExporter(&b)).WithCaller(true)
 	l.WithFields().AddString("k1", "v1")
 	l.WithFields().AddString("k2", "v2")
 
@@ -63,7 +63,7 @@ func TestLogger_WithCaller(t *testing.T) {
 
 func TestLogger_WithFields(t *testing.T) {
 	var b bytes.Buffer
-	l := NewDefault().WithExporter(MatchExporter(&b, nil))
+	l := NewDefault().WithExporter(StandardExporter(&b))
 
 	l.WithFields().AddString("req-k1", "req-v1")
 	l.WithFields().AddString("dup-key", "dup-v1")
@@ -88,7 +88,7 @@ func TestLogger_Clone(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
 	l := NewDefault().
-		WithExporter(MatchExporter(&b, nil)).
+		WithExporter(StandardExporter(&b)).
 		WithErrorOutput(&eb).
 		WithContext(ctx1)
 
@@ -190,7 +190,7 @@ func TestLoggerWithTextEncoder(t *testing.T) {
 func TestLoggerWithJSONEncoder(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExporter(MatchExporter(&b, nil)).
+	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExporter(StandardExporter(&b)).
 		WithCaller(true).WithErrorOutput(&eb)
 
 	l.Info().

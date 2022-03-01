@@ -32,7 +32,7 @@ func BenchmarkLogger_Clone(b *testing.B) {
 }
 
 func BenchmarkLogEmpty(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -42,7 +42,7 @@ func BenchmarkLogEmpty(b *testing.B) {
 }
 
 func BenchmarkLogDisabled(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil)).WithLevel(InfoLevel)
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard)).WithLevel(InfoLevel)
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -52,7 +52,7 @@ func BenchmarkLogDisabled(b *testing.B) {
 }
 
 func BenchmarkLogMsg(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -62,7 +62,7 @@ func BenchmarkLogMsg(b *testing.B) {
 }
 
 func BenchmarkLogFields(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -78,7 +78,7 @@ func BenchmarkLogFields(b *testing.B) {
 }
 
 func BenchmarkLogWithFields(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	l.WithFields().AddString("string", "four")
 	l.WithFields().AddTime("time", time.Time{}, "")
 	l.WithFields().AddInt64("int", 123)
@@ -93,7 +93,7 @@ func BenchmarkLogWithFields(b *testing.B) {
 }
 
 func BenchmarkLog10Fields(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -115,7 +115,7 @@ func BenchmarkLog10Fields(b *testing.B) {
 }
 
 func BenchmarkLog10String(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -137,7 +137,7 @@ func BenchmarkLog10String(b *testing.B) {
 }
 
 func BenchmarkLog10Int64(b *testing.B) {
-	l := NewDefault().WithExporter(MatchExporter(ioutil.Discard, nil))
+	l := NewDefault().WithExporter(StandardExporter(ioutil.Discard))
 	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {

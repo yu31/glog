@@ -73,9 +73,9 @@ type BuildEncoder interface {
 
 	// AddBeginMarker add the begin marker.
 	AddBeginMarker()
-	// AppendEndMarker add the end marker.
+	// AddEndMarker add the end marker.
 	AddEndMarker()
-	// AppendLineBreak add the line break.
+	// AddLineBreak add the line break.
 	AddLineBreak()
 
 	// WriteIn used to write encoded data.
@@ -88,6 +88,6 @@ type Encoder interface {
 
 	// Bytes returns a mutable reference to the byte slice of the Encoder
 	Bytes() []byte
-	// Callers must not retain references to the Encoder after calling Close.
+	// Close callers must not retain references to the Encoder after calling Close.
 	Close() error
 }

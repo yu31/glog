@@ -141,6 +141,9 @@ func (l *Logger) Clone() *Logger {
 // Notes: Close don't close the Exporter because it may be
 // shared by multiple Logger instances.
 func (l *Logger) Close() error {
+	if l == nil {
+		return nil
+	}
 	var errs []error
 
 	if err := l.fields.Close(); err != nil {
@@ -172,22 +175,22 @@ func (l *Logger) Debug() *Entry {
 	return l.newEntry(DebugLevel)
 }
 
-// Debug returns an Entry with InfoLevel.
+// Info returns an Entry with InfoLevel.
 func (l *Logger) Info() *Entry {
 	return l.newEntry(InfoLevel)
 }
 
-// Debug returns an Entry with WarnLevel.
+// Warn returns an Entry with WarnLevel.
 func (l *Logger) Warn() *Entry {
 	return l.newEntry(WarnLevel)
 }
 
-// Debug returns an Entry with ErrorLevel.
+// Error returns an Entry with ErrorLevel.
 func (l *Logger) Error() *Entry {
 	return l.newEntry(ErrorLevel)
 }
 
-// Debug returns an Entry with FatalLevel.
+// Fatal returns an Entry with FatalLevel.
 func (l *Logger) Fatal() *Entry {
 	return l.newEntry(FatalLevel)
 }

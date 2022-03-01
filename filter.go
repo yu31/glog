@@ -19,8 +19,8 @@ func MatchGTLevel(lvl Level) Filter {
 	})
 }
 
-// MatchGELevel used to match an level is granter than or equal the specified level(`lvl`).
-func MatchGELevel(lvl Level) Filter {
+// MatchGTELevel used to match an level is granter than or equal the specified level(`lvl`).
+func MatchGTELevel(lvl Level) Filter {
 	return MatchFunc(func(level Level) bool {
 		return level >= lvl
 	})
@@ -33,8 +33,8 @@ func MatchLTLevel(lvl Level) Filter {
 	})
 }
 
-// MatchLELevel used to match an level is less than or equal the level(`lvl`).
-func MatchLELevel(lvl Level) Filter {
+// MatchLTELevel used to match an level is less than or equal the level(`lvl`).
+func MatchLTELevel(lvl Level) Filter {
 	return MatchFunc(func(level Level) bool {
 		return level <= lvl
 	})

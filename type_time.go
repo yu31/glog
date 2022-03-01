@@ -16,7 +16,7 @@ const (
 	// serialized as Unix timestamp integers in seconds.
 	TimeFormatUnixSecond = "UnixSecond"
 
-	// TimeFormatUnixMs defines a time format that makes time fields to be
+	// TimeFormatUnixMilli defines a time format that makes time fields to be
 	// serialized as Unix timestamp integers in milliseconds.
 	TimeFormatUnixMilli = "UnixMilli"
 
@@ -24,7 +24,7 @@ const (
 	// serialized as Unix timestamp integers in microseconds.
 	TimeFormatUnixMicro = "UnixMicro"
 
-	// TimeFormatUnixNs defines a time format that makes time fields to be
+	// TimeFormatUnixNano defines a time format that makes time fields to be
 	// serialized as Unix timestamp integers in nanoseconds.
 	TimeFormatUnixNano = "UnixNano"
 )

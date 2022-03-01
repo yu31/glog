@@ -83,7 +83,7 @@ func TestJsonEncoder_AddObject(t *testing.T) {
 func TestJSONEncoder_AddFields(t *testing.T) {
 	var eb bytes.Buffer
 	var b bytes.Buffer
-	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExporter(MatchExporter(&b, nil)).
+	l := NewDefault().WithEncoderFunc(JSONEncoder).WithExporter(StandardExporter(&b)).
 		WithCaller(true).WithErrorOutput(&eb)
 
 	l.WithFields().AddString("rid", "xxxxxx01")
