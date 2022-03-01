@@ -27,12 +27,33 @@ func TestLoggerNewDefault(t *testing.T) {
 	require.True(t, reflect.DeepEqual(l.errorOutput, os.Stderr))
 }
 
+type loggerWithContext struct {
+	record *Record
+}
+
+func (exp *loggerWithContext) Export(record *Record) (err error) {
+	exp.record = record
+	return
+}
+
+func (exp *loggerWithContext) Close() (err error) {
+	return
+}
+
 func TestLogger_WithContext(t *testing.T) {
 	type ctxKey struct{}
 	ctx := context.WithValue(context.Background(), ctxKey{}, "v1")
-	l := NewDefault().WithContext(ctx)
+	exporter := &loggerWithContext{}
+
+	l := NewDefault().WithContext(ctx).WithExporter(exporter)
 	require.Equal(t, l.ctx, ctx)
 	require.True(t, reflect.DeepEqual(l.ctx, ctx))
+
+	l.Error().Msg("Hello World").Fire()
+	require.Equal(t, exporter.record.Level(), ErrorLevel)
+	require.NotNil(t, exporter.record.Context())
+	require.Equal(t, exporter.record.Context(), ctx)
+	require.True(t, reflect.DeepEqual(exporter.record.Context(), ctx))
 }
 
 func TestLogger_WithLevel(t *testing.T) {
