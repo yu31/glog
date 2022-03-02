@@ -37,6 +37,9 @@ type Logger struct {
 	//
 	// NOTE: logger will not check returning error of this writer
 	errorOutput io.Writer
+
+	// isRoot indicates the logger whether is a root logger.
+	isRoot bool
 }
 
 func NewDefault() *Logger {
@@ -49,6 +52,7 @@ func NewDefault() *Logger {
 		fields:      nil,
 		exporter:    DefaultExporter,
 		errorOutput: os.Stderr,
+		isRoot:      true,
 	}
 	l.fields = l.encoderFunc()
 	return l
@@ -128,6 +132,7 @@ func (l *Logger) Clone() *Logger {
 		encoderFunc: l.encoderFunc,
 		fields:      l.encoderFunc(),
 		errorOutput: l.errorOutput,
+		isRoot:      false,
 	}
 	err := nl.fields.WriteIn(l.fields.Bytes())
 	if err != nil {
@@ -138,8 +143,7 @@ func (l *Logger) Clone() *Logger {
 
 // Close close the logger for releasing resources.
 //
-// Notes: Close don't close the Exporter because it may be
-// shared by multiple Logger instances.
+// Notes: Close will close the Exporter in root logger.
 func (l *Logger) Close() error {
 	if l == nil {
 		return nil
@@ -148,6 +152,12 @@ func (l *Logger) Close() error {
 
 	if err := l.fields.Close(); err != nil {
 		errs = append(errs, err)
+	}
+	if l.isRoot {
+		// Close the exporter is the root logger.
+		if err := l.exporter.Close(); err != nil {
+			errs = append(errs, err)
+		}
 	}
 
 	l.ctx = nil
