@@ -141,7 +141,7 @@ func (l *Logger) Clone() *Logger {
 	return nl
 }
 
-// Close close the logger for releasing resources.
+// Close the logger for releasing resources.
 //
 // Notes: Close will close the Exporter in root logger.
 func (l *Logger) Close() error {

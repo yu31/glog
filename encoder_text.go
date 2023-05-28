@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/DataWorkbench/glog/pkg/buffer"
+	"github.com/yu31/glog/pkg/buffer"
 )
 
 var _ Encoder = (*textEncoder)(nil)
@@ -27,7 +27,7 @@ type textEncoder struct {
 	buf *buffer.Buffer
 }
 
-// Implements encoder
+// Bytes Implements encoder
 func (enc *textEncoder) Bytes() []byte {
 	return enc.buf.Bytes()
 }
@@ -37,7 +37,7 @@ func (enc *textEncoder) Close() error {
 	return nil
 }
 
-// Implements BuildEncoder.
+// AddBeginMarker Implements BuildEncoder.
 func (enc *textEncoder) AddBeginMarker() {}
 func (enc *textEncoder) AddEndMarker()   {}
 func (enc *textEncoder) AddLineBreak()   { enc.buf.AppendByte('\n') }
@@ -77,7 +77,7 @@ func (enc *textEncoder) WriteIn(p []byte) error {
 	return err
 }
 
-// Implements ObjectEncoder.
+// AddByte Implements ObjectEncoder.
 func (enc *textEncoder) AddByte(k string, b byte)       { enc.appendKey(k); enc.appendByteInt(b) }
 func (enc *textEncoder) AddString(k string, s string)   { enc.appendKey(k); enc.appendString(s) }
 func (enc *textEncoder) AddBool(k string, v bool)       { enc.appendKey(k); enc.appendBool(v) }
@@ -111,7 +111,7 @@ func (enc *textEncoder) AddInterface(k string, i interface{}) error {
 	return enc.appendInterface(i)
 }
 
-// Implements FieldEncoder.
+// AppendByte Implements FieldEncoder.
 func (enc *textEncoder) AppendByte(v byte)       { enc.appendElementSeparator(); enc.appendByteInt(v) }
 func (enc *textEncoder) AppendString(s string)   { enc.appendElementSeparator(); enc.appendString(s) }
 func (enc *textEncoder) AppendBool(v bool)       { enc.appendElementSeparator(); enc.appendBool(v) }

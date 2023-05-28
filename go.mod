@@ -1,4 +1,4 @@
-module github.com/DataWorkbench/glog
+module github.com/yu31/glog
 
 go 1.15
 

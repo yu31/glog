@@ -3,7 +3,7 @@ package glog
 import (
 	"time"
 
-	"github.com/DataWorkbench/glog/pkg/buffer"
+	"github.com/yu31/glog/pkg/buffer"
 )
 
 const (

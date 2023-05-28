@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/DataWorkbench/glog/pkg/buffer"
+	"github.com/yu31/glog/pkg/buffer"
 )
 
 var _ Encoder = (*jsonEncoder)(nil)
@@ -28,7 +28,7 @@ type jsonEncoder struct {
 	buf *buffer.Buffer
 }
 
-// Implements encoder.
+// Bytes Implements encoder.
 func (enc *jsonEncoder) Bytes() []byte {
 	return enc.buf.Bytes()
 }
@@ -38,7 +38,7 @@ func (enc *jsonEncoder) Close() error {
 	return nil
 }
 
-// Implements BuildEncoder.
+// AddBeginMarker Implements BuildEncoder.
 func (enc *jsonEncoder) AddBeginMarker() { enc.buf.AppendByte('{') }
 func (enc *jsonEncoder) AddEndMarker()   { enc.buf.AppendByte('}') }
 func (enc *jsonEncoder) AddLineBreak()   { enc.buf.AppendByte('\n') }
@@ -78,7 +78,7 @@ func (enc *jsonEncoder) WriteIn(p []byte) error {
 	return err
 }
 
-// Implements ObjectEncoder.
+// AddByte Implements ObjectEncoder.
 func (enc *jsonEncoder) AddByte(k string, b byte)       { enc.appendKey(k); enc.appendByteInt(b) }
 func (enc *jsonEncoder) AddString(k string, s string)   { enc.appendKey(k); enc.appendString(s) }
 func (enc *jsonEncoder) AddBool(k string, v bool)       { enc.appendKey(k); enc.appendBool(v) }
@@ -112,7 +112,7 @@ func (enc *jsonEncoder) AddInterface(k string, i interface{}) error {
 	return enc.appendInterface(i)
 }
 
-// Implements FieldEncoder.
+// AppendByte Implements FieldEncoder.
 func (enc *jsonEncoder) AppendByte(b byte)       { enc.appendElementSeparator(); enc.appendByteInt(b) }
 func (enc *jsonEncoder) AppendString(s string)   { enc.appendElementSeparator(); enc.appendString(s) }
 func (enc *jsonEncoder) AppendBool(v bool)       { enc.appendElementSeparator(); enc.appendBool(v) }

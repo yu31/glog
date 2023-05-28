@@ -3,7 +3,7 @@ package glog
 import (
 	"unicode/utf8"
 
-	"github.com/DataWorkbench/glog/pkg/buffer"
+	"github.com/yu31/glog/pkg/buffer"
 )
 
 const hex = "0123456789abcdef"

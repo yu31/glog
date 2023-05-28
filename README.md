@@ -17,11 +17,11 @@ The glog package provides a fast and simple logger dedicated to TEXT/JSON output
 ## Installation
 
 ```bash
-go get -u github.com/DataWorkbench/glog
+go get -u github.com/yu31/glog
 ```
 Used in go modules
 ```bash
-go get -insecure github.com/DataWorkbench/glog
+go get -insecure github.com/yu31/glog
 ```
 
 ## Quick Start
@@ -31,7 +31,7 @@ go get -insecure github.com/DataWorkbench/glog
 package main
 
 import (
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -51,7 +51,7 @@ func main() {
 package main
 
 import (
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -71,7 +71,7 @@ func main() {
 package main
 
 import (
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -95,7 +95,7 @@ package main
 import (
 	"time"
 
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -115,7 +115,7 @@ func main() {
 package main
 
 import (
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -125,7 +125,7 @@ func main() {
 	l.Debug().Msg("HelloWorld").String("s1", "v1").Int64("i1", 1).Fire()
 
 	/* Output:
-	2020-11-04T18:06:13.151354+08:00 [debug] HelloWorld s1=v1 i1=1 (github.com/DataWorkbench/glog/examples/main.go:11)
+	2020-11-04T18:06:13.151354+08:00 [debug] HelloWorld s1=v1 i1=1 (github.com/yu31/glog/examples/main.go:11)
 	*/
 }
 ``` 
@@ -137,7 +137,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -168,7 +168,7 @@ package main
 import (
 	"context"
 
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -191,7 +191,7 @@ func main() {
 package main
 
 import (
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -212,7 +212,7 @@ func main() {
 package main
 
 import (
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
@@ -252,7 +252,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/DataWorkbench/glog"
+	"github.com/yu31/glog"
 )
 
 func main() {
